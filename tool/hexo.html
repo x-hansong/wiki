@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+        <title>hexo折腾日记 - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#tool">tool</a> » hexo折腾日记
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">hexo折腾日记</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#1hackcname">折腾1:hack部署源码,自动添加CNAME文件</a><ul>
+<li><a href="#_1">问题描述</a></li>
+<li><a href="#_2">解决方法</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="1hackcname">折腾1:hack部署源码,自动添加CNAME文件</h2>
+<h3 id="_1">问题描述</h3>
+<p>我使用github pages的功能作为博客的免费空间,hexo来自动部署博客.hexo的deploy操作实质是清空.deploy目录,然后把public目录的文件复制进去,然后push到github上面.这样做简单粗暴,缺点是你根本没办法自己往生成的目录里面添加东西,因为每次它部署都会清空原来的东西,总不能每次部署完我再添加CNAME手动push吧.</p>
+<h3 id="_2">解决方法</h3>
+<p>手动hack代码.首先找到部署相关的插件即<code>hexo-deployer-git</code>,部署的源代码在<code>lib/deployer.js</code>中.找到</p>
+<div class="hlcode"><pre>    <span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Copying</span> <span class="n">files</span> <span class="n">from</span> <span class="n">public</span> <span class="n">folder</span><span class="p">...</span><span class="err">&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">fs</span><span class="p">.</span><span class="n">copyDir</span><span class="p">(</span><span class="n">publicDir</span><span class="p">,</span> <span class="n">deployDir</span><span class="p">);</span>
+</pre></div>
+
+
+<p>在<code>fs.copyDir</code>插入<code>fs.writeFile(deployDir+'/CNAME', 'blog.xiaohansong.com');</code></p>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2015 HanSong Xiao.
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.
+            </span>
+        </div>
+    </body>
+</html>
