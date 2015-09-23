@@ -55,4 +55,6 @@ For more information, `simiki -h` or have a look at [Simiki.org](http://simiki.o
 ## 补充
 
 ### 自动生成目录
+> add at 2015-09-20
+
 在文中插入`[TOC]`,这个功能作者没有在文档里面提出来.可能觉得大家都知道的吧,反正我一开始是不知道的.
