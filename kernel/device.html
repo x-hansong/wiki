@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>Linux设备管理 - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#kernel">kernel</a> » Linux设备管理
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">Linux设备管理</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#linux">Linux内核对硬件设备的支持级别</a></li>
+</ul>
+</div>
+<h2 id="linux">Linux内核对硬件设备的支持级别</h2>
+<blockquote>
+<p>add at 2015-09-22</p>
+</blockquote>
+<ol>
+<li>
+<p>完全不支持</p>
+<p>应用程序使用适当的in和out汇编语言指令直接与设备的I/O端口进行交互</p>
+</li>
+<li>
+<p>最小支持</p>
+<p>内核不识别硬件设备,但能识别它的I/O接口.用户程序把I/O接口视为能够读写的字符流的顺序设备</p>
+</li>
+<li>
+<p>扩展支持</p>
+<p>内核识别硬件设备,并处理I/O接口本身.事实上,这种设备可能就没有对应的设备文件</p>
+</li>
+</ol>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2015 HanSong Xiao.
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.
+            </span>
+        </div>
+    </body>
+</html>

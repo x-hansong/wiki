@@ -177,7 +177,7 @@ li.pagelist:before {
     float: left;
 }
 
-#container .category h2{ color: #CCC; }
+#container .category h2{ color: #CCC; word-wrap: break-word;}
 
 #content h2 { color: #88ACDB; }
 
