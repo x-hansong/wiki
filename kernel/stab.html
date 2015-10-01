@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>stabs符号调试表 - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#kernel">kernel</a> » stabs符号调试表
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">stabs符号调试表</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#whats-stabs">what's stabs</a></li>
+<li><a href="#stabs-in-jos">stabs in JOS</a></li>
+<li><a href="#_1">例子</a></li>
+</ul>
+</div>
+<blockquote>
+<p>add at 2015-10-01</p>
+</blockquote>
+<h2 id="whats-stabs">what's stabs</h2>
+<blockquote>
+<p>Stabs refers to a format for information that describes a program to a debugger.</p>
+</blockquote>
+<p>stabs指的是调试符号表,可以通过gcc编译时加上<code>-gstabs -S</code>来生成source.s文件.
+它的一般格式是<code>.stabs "string",type,other,desc,value</code></p>
+<h2 id="stabs-in-jos">stabs in JOS</h2>
+<p>在MIT的JOS实验中,它使用stabs来打印调试信息.</p>
+<div class="hlcode"><pre><span class="c">#define N_GSYM      0x20    // global symbol</span>
+<span class="c">#define N_FNAME     0x22    // F77 function name</span>
+<span class="c">#define N_FUN       0x24    // procedure name</span>
+<span class="c">#define N_STSYM     0x26    // data segment variable</span>
+<span class="c">#define N_LCSYM     0x28    // bss segment variable</span>
+<span class="c">#define N_MAIN      0x2a    // main function name</span>
+<span class="c">#define N_PC        0x30    // global Pascal symbol</span>
+<span class="c">#define N_RSYM      0x40    // register variable</span>
+<span class="c">#define N_SLINE     0x44    // text segment line number</span>
+<span class="c">#define N_DSLINE    0x46    // data segment line number</span>
+<span class="c">#define N_BSLINE    0x48    // bss segment line number</span>
+<span class="c">#define N_SSYM      0x60    // structure/union element</span>
+<span class="c">#define N_SO        0x64    // main source file name</span>
+<span class="c">#define N_LSYM      0x80    // stack variable</span>
+<span class="c">#define N_BINCL     0x82    // include file beginning</span>
+<span class="c">#define N_SOL       0x84    // included source file name</span>
+<span class="c">#define N_PSYM      0xa0    // parameter variable</span>
+<span class="c">#define N_EINCL     0xa2    // include file end</span>
+<span class="c">#define N_ENTRY     0xa4    // alternate entry point</span>
+<span class="c">#define N_LBRAC     0xc0    // left bracket</span>
+<span class="c">#define N_EXCL      0xc2    // deleted include file</span>
+<span class="c">#define N_RBRAC     0xe0    // right bracket</span>
+<span class="c">#define N_BCOMM     0xe2    // begin common</span>
+<span class="c">#define N_ECOMM     0xe4    // end common</span>
+<span class="c">#define N_ECOML     0xe8    // end common (local name)</span>
+<span class="c">#define N_LENG      0xfe    // length of preceding entry</span>
+</pre></div>
+
+
+<p>上面的stabs类型JOS只用到了N_SO, N_SOL, N_FUN, N_SLINE.</p>
+<p>其自定义的<code>stab</code>结构为:</p>
+<div class="hlcode"><pre><span class="cm">/* Entries in the STABS table are formatted as follows. */</span>
+<span class="k">struct</span> <span class="n">stab</span> <span class="p">{</span>
+    <span class="n">uint32_t</span> <span class="n">n_strx</span><span class="p">;</span>        <span class="c1">// index into string table of name</span>
+    <span class="n">uint8_t</span> <span class="n">n_type</span><span class="p">;</span>         <span class="c1">// type of symbol</span>
+    <span class="n">uint8_t</span> <span class="n">n_other</span><span class="p">;</span>        <span class="c1">// misc info (usually empty)</span>
+    <span class="n">uint16_t</span> <span class="n">n_desc</span><span class="p">;</span>        <span class="c1">// description field</span>
+    <span class="n">uintptr_t</span> <span class="n">n_value</span><span class="p">;</span>      <span class="c1">// value of symbol</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<h2 id="_1">例子</h2>
+<ul>
+<li>
+<p>编写hello.c</p>
+<div class="hlcode"><pre><span class="cp">#include &lt;stdio.h&gt;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;hello</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>编译</p>
+<div class="hlcode"><pre><span class="n">gcc</span> <span class="o">-</span><span class="n">gstabs</span> <span class="o">-</span><span class="n">S</span> <span class="p">.</span><span class="o">/</span><span class="n">hello</span><span class="p">.</span><span class="n">c</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>打开hello.s,可以看到</p>
+<div class="hlcode"><pre><span class="p">.</span><span class="n">stabs</span>  <span class="s">&quot;main:F(0,1)&quot;</span><span class="p">,</span><span class="mi">36</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">main</span>
+</pre></div>
+
+
+<p>其中,"main:F(0,1)"对应n_strx, 36对应n_type(0x24的十进制即36).</p>
+</li>
+</ul>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2015 HanSong Xiao.
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.
+            </span>
+        </div>
+    </body>
+</html>
