@@ -41,7 +41,7 @@
 <p>stabs指的是调试符号表,可以通过gcc编译时加上<code>-gstabs -S</code>来生成source.s文件.
 它的一般格式是<code>.stabs "string",type,other,desc,value</code></p>
 <h2 id="stabs-in-jos">stabs in JOS</h2>
-<p>在MIT的JOS实验中,它使用stabs来打印调试信息.</p>
+<p>在MIT的JOS实验中,它使用stabs中的调试信息.</p>
 <div class="hlcode"><pre><span class="c">#define N_GSYM      0x20    // global symbol</span>
 <span class="c">#define N_FNAME     0x22    // F77 function name</span>
 <span class="c">#define N_FUN       0x24    // procedure name</span>
