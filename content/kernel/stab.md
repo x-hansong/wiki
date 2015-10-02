@@ -12,7 +12,7 @@ stabs指的是调试符号表,可以通过gcc编译时加上`-gstabs -S`来生�
 它的一般格式是`.stabs "string",type,other,desc,value`
 
 ## stabs in JOS
-在MIT的JOS实验中,它使用stabs来打印调试信息.
+在MIT的JOS实验中,它使用stabs中的调试信息.
 
 ```
 #define N_GSYM      0x20    // global symbol
