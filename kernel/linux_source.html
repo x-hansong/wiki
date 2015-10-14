@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>Linux源码编程技巧 - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#kernel">kernel</a> » Linux源码编程技巧
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">Linux源码编程技巧</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">保留字</a><ul>
+<li><a href="#inline__inline__">inline和__inline__</a></li>
+</ul>
+</li>
+<li><a href="#_2">宏定义技巧</a><ul>
+<li><a href="#do-while">do-while单次循环</a></li>
+<li><a href="#_3">空操作</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="_1">保留字</h2>
+<blockquote>
+<p>add at 2015-10-13</p>
+</blockquote>
+<h3 id="inline__inline__"><code>inline</code>和<code>__inline__</code></h3>
+<p>由于<code>inline</code>在ANSI C中并非保留字，直接使用<code>inline</code>会可能会产生冲突。例如，gcc支持保留字<code>inline</code>，由于<code>inline</code>原来不是保留字，在旧的代码中可能已经有一个变量名为<code>inline</code>，这样就会产生冲突。为了解决这个问题，gcc允许作为保留字使用的<code>inline</code>前后都加上<code>__</code>,所以，<code>__inline__</code>等价于保留字<code>inline</code>.同样的道理,<code>__asm__</code>等价于保留字<code>asm</code></p>
+<h2 id="_2">宏定义技巧</h2>
+<blockquote>
+<p>add at 2015-10-13</p>
+</blockquote>
+<h3 id="do-while">do-while单次循环</h3>
+<div class="hlcode"><pre><span class="c">#define DUMP_WRITE(addr,nr) do { memcpy(bufp,addr,nr); bufp += nr; } while(0)</span>
+</pre></div>
+
+
+<p>上面是取自<code>fs/proc/kcore.c</code>的一个宏.为什么要定义成这种形式呢?能不能定义成下面这样</p>
+<div class="hlcode"><pre><span class="c">#define DUMP_WRITE(addr,nr)  memcpy(bufp,addr,nr); bufp += nr;</span>
+</pre></div>
+
+
+<p>这样是不行的,在一个if语句中,这样会有错误产生.例如说:</p>
+<div class="hlcode"><pre><span class="k">if</span> <span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+    <span class="n">DUMP_WRITE</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="n">nr</span><span class="p">);</span>
+<span class="k">else</span>
+    <span class="nf">do</span><span class="p">();</span>
+</pre></div>
+
+
+<p>经过预处理就会变成</p>
+<div class="hlcode"><pre><span class="k">if</span> <span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+    <span class="n">memcpy</span><span class="p">(</span><span class="n">bufp</span><span class="p">,</span><span class="n">addr</span><span class="p">,</span><span class="n">nr</span><span class="p">);</span> <span class="n">bufp</span> <span class="o">+=</span> <span class="n">nr</span><span class="p">;</span>
+<span class="k">else</span>
+    <span class="nf">do</span><span class="p">();</span>
+</pre></div>
+
+
+<p>显然,这样编译会出错,因为没有括号包住if后面的两个语句.</p>
+<p>通过上面这个例子,我们可以发现,使用do-while单次循环的方式定义,就可以避免出现类似问题.</p>
+<h3 id="_3">空操作</h3>
+<blockquote>
+<p>add at 2015-10-13</p>
+</blockquote>
+<p>由于linux要兼容不同的CPU,所以在某些条件下要把一些宏定义为空操作,但是不能留空白.</p>
+<div class="hlcode"><pre><span class="c">#define prepare_to_switch() do {  } while(0)</span>
+</pre></div>
+
+
+<p>这样子定义,不管在什么条件调用这个函数都不会出现错误,如果定义成这样:</p>
+<div class="hlcode"><pre><span class="c">#define prepare_to_switch()</span>
+</pre></div>
+
+
+<p>那么在上面的if语句中就会出现错误.</p>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2015 HanSong Xiao.
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.
+            </span>
+        </div>
+    </body>
+</html>
