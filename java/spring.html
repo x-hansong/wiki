@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>Spring疑难杂症 - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#java">java</a> » Spring疑难杂症
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">Spring疑难杂症</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#spring-data-jpa">Spring Data JPA映射表名大小写不敏感</a><ul>
+<li><a href="#_1">问题描述</a></li>
+<li><a href="#_2">解决办法</a></li>
+<li><a href="#_3">问题原因</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="spring-data-jpa">Spring Data JPA映射表名大小写不敏感</h2>
+<blockquote>
+<p>add at 2015-10-19</p>
+</blockquote>
+<h3 id="_1">问题描述</h3>
+<p>使用<code>@Table(name="User")</code>指定表名的时候,表名会被映射为<code>user</code>,结果执行sql语句就会报找不到表名的错误.</p>
+<h3 id="_2">解决办法</h3>
+<p>改变hibernate的naming-strategy</p>
+<p>我使用的是spring boot,所以只需要在<code>application.properties</code>中加入</p>
+<div class="hlcode"><pre><span class="n">spring</span><span class="p">.</span><span class="n">jpa</span><span class="p">.</span><span class="n">hibernate</span><span class="p">.</span><span class="n">naming</span><span class="o">-</span><span class="n">strategy</span><span class="o">=</span><span class="n">org</span><span class="p">.</span><span class="n">hibernate</span><span class="p">.</span><span class="n">cfg</span><span class="p">.</span><span class="n">DefaultNamingStrategy</span>
+</pre></div>
+
+
+<h3 id="_3">问题原因</h3>
+<p>spring默认使用的hibernate naming-strategy是大小写不敏感的.</p>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2015 HanSong Xiao.
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.
+            </span>
+        </div>
+    </body>
+</html>
