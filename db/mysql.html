@@ -6,7 +6,7 @@
         <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
         <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
     	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
-        <title>MySql使用日志 - <a href="http://wiki.xiaohansong.com">Wiki</a> | <a href="http://xiaohansong.com">HanSong</a></title>
+        <title>MySQL - Wiki | HanSong</title>
         <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
         <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -18,32 +18,41 @@
     <div id="header">
         <div id="post-nav">
             
-            <a href="/">Home</a> » <a href="/#db">db</a> » MySql使用日志
+            <a href="/">Home</a> » <a href="/#db">db</a> » MySQL
             
         </div>
     </div>
     <div class="clearfix"></div>
-    <div id="title">MySql使用日志</div>
+    <div id="title">MySQL</div>
     <div id="content">
         <div class="toc"><span class="toctitle">Table of Contents</span><ul>
-<li><a href="#_1">简单命令</a><ul>
+<li><a href="#_1">基本命令</a><ul>
 <li><a href="#sql">运行sql脚本</a></li>
+<li><a href="#mysql">登录mysql控制台</a></li>
 </ul>
 </li>
-<li><a href="#mysql">Mysql远程连接</a><ul>
+<li><a href="#mysql_1">Mysql远程连接</a><ul>
 <li><a href="#_2">操作步骤</a></li>
 <li><a href="#_3">可能出现的问题</a></li>
 </ul>
 </li>
 </ul>
 </div>
-<h2 id="_1">简单命令</h2>
+<h2 id="_1">基本命令</h2>
 <blockquote>
 <p>add at 2015-10-31</p>
 </blockquote>
 <h3 id="sql">运行sql脚本</h3>
-<p>在mysql控制台中输入<code>source my.sql</code></p>
-<h2 id="mysql">Mysql远程连接</h2>
+<div class="hlcode"><pre><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">source</span> <span class="n">my</span><span class="p">.</span><span class="n">sql</span><span class="p">;</span>
+</pre></div>
+
+
+<h3 id="mysql">登录mysql控制台</h3>
+<div class="hlcode"><pre><span class="n">mysql</span> <span class="o">-</span><span class="n">h</span> <span class="n">host</span> <span class="o">-</span><span class="n">u</span> <span class="n">username</span> <span class="o">-</span><span class="n">p</span>
+</pre></div>
+
+
+<h2 id="mysql_1">Mysql远程连接</h2>
 <blockquote>
 <p>add at 2015-10-31</p>
 </blockquote>
@@ -89,8 +98,8 @@
         </div>
         <div id="footer">
             <span>
-                Copyright © 2012-2015 <a href="http://xiaohansong.com">HanSong Xiao</a>.
-                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.
+                Copyright © 2012-2015 <a href="http://xiaohansong.com">HanSong Xiao</a>
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
             </span>
         </div>
     </body>
