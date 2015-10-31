@@ -5,12 +5,14 @@ date: 2015-10-31
 ---
 [TOC]
 
-## 简单命令
+## 基本命令
 > add at 2015-10-31
 
 ### 运行sql脚本
-在mysql控制台中输入`source my.sql`
+    mysql> source my.sql;
 
+### 登录mysql控制台
+    mysql -h host -u username -p
 
 ## Mysql远程连接
 > add at 2015-10-31
