@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>MySql使用日志 - <a href="http://wiki.xiaohansong.com">Wiki</a> | <a href="http://xiaohansong.com">HanSong</a></title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#db">db</a> » MySql使用日志
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">MySql使用日志</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">简单命令</a><ul>
+<li><a href="#sql">运行sql脚本</a></li>
+</ul>
+</li>
+<li><a href="#mysql">Mysql远程连接</a><ul>
+<li><a href="#_2">操作步骤</a></li>
+<li><a href="#_3">可能出现的问题</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="_1">简单命令</h2>
+<blockquote>
+<p>add at 2015-10-31</p>
+</blockquote>
+<h3 id="sql">运行sql脚本</h3>
+<p>在mysql控制台中输入<code>source my.sql</code></p>
+<h2 id="mysql">Mysql远程连接</h2>
+<blockquote>
+<p>add at 2015-10-31</p>
+</blockquote>
+<h3 id="_2">操作步骤</h3>
+<ol>
+<li>登录mysql控制台</li>
+<li>
+<p>修改mysql库中的user表,让某个用户拥有在任意机器上远程连接mysql的权限</p>
+<div class="hlcode"><pre><span class="n">use</span> <span class="n">mysql</span><span class="p">;</span>
+<span class="c1">//查看当前用户表中用户访问权限,user表的主键是host+user</span>
+<span class="n">select</span> <span class="n">host</span><span class="p">,</span><span class="n">user</span> <span class="n">from</span> <span class="n">user</span><span class="p">;</span>
+<span class="c1">//默认情况下,root的host有一个是`localhost`,代表用户只能在本机上连接mysql</span>
+<span class="c1">//我们可以换成`%`,代表用户可以在任意主机上连接mysql</span>
+<span class="n">update</span> <span class="n">user</span> <span class="n">set</span> <span class="n">host</span> <span class="o">=</span> <span class="sc">&#39;%&#39;</span> <span class="n">where</span> <span class="n">user</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">root</span><span class="err">&#39;</span> <span class="n">and</span> <span class="n">host</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">localhost</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="c1">//刷新权限</span>
+<span class="n">flush</span> <span class="n">privileges</span><span class="p">;</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>在其他机器上连接mysql</p>
+<div class="hlcode"><pre><span class="n">mysql</span> <span class="o">-</span><span class="n">h</span> <span class="err">&#39;</span><span class="n">host</span> <span class="n">ip</span><span class="err">&#39;</span> <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">p</span>
+</pre></div>
+
+
+</li>
+</ol>
+<h3 id="_3">可能出现的问题</h3>
+<ol>
+<li>
+<p>在Ubuntu系统下可能会报错<code>ERROR 2003 (HY000): Can't connect to MySQL server on 'xxx.xxx.xxx.xxx' (111)</code></p>
+<p><strong>解决方法:</strong></p>
+<ul>
+<li><code>vim /etc/mysql/my.cnf</code></li>
+<li>注释掉<code>bind-address = 127.0.0.1</code></li>
+<li>重启mysql</li>
+</ul>
+</li>
+</ol>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2015 <a href="http://xiaohansong.com">HanSong Xiao</a>.
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.
+            </span>
+        </div>
+    </body>
+</html>
