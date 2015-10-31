@@ -1,5 +1,5 @@
 ---
-title: Linux个人配置
+title: Linux常用软件
 layout: page
 date: 2015-09-27
 ---

@@ -1,5 +1,5 @@
 ---
-title: Spring疑难杂症
+title: Spring
 layout: page
 date: 2015-10-19
 ---

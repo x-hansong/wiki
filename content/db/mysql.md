@@ -1,5 +1,5 @@
 ---
-title: MySql使用日志
+title: MySQL
 layout: page
 date: 2015-10-31
 ---

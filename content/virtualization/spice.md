@@ -1,5 +1,5 @@
 ---
-title: spice学习日记
+title: spice
 layout: page
 date: 2015-09-22
 ---
