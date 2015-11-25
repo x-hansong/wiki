@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>ln - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#linux">linux</a> » ln
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">ln</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">命令说明</a></li>
+<li><a href="#_2">注意事项</a></li>
+</ul>
+</div>
+<h2 id="_1">命令说明</h2>
+<p>指令名称 : ln</p>
+<p>使用权限 : 所有使用者</p>
+<p>使用方式 : <code>ln [options] source dist</code>，其中 option 的格式为 :
+<code>[-bdfinsvF] [-S backup-suffix] [-V {numbered,existing,simple}] [--help] [--version] [--]</code></p>
+<p>说明 : Linux/Unix 档案系统中，有所谓的链接(link)，我们可以将其视为档案的别名，而链接又可分为两种 : 硬链接(hard link)与软链接(symbolic link)，硬链接的意思是一个档案可以有多个名称，而软链接的方式则是产生一个特殊的档案，该档案的内容是指向另一个档案的位置。硬链接是存在同一个档案系统中，而软链接却可以跨越不同的档案系统。</p>
+<p><code>ln source dist</code> 是产生一个链接(dist)到 source，至于使用硬链接或软链接则由参数决定。</p>
+<p>不论是硬链接或软链接都不会将原本的档案复制一份，只会占用非常少量的磁碟空间。</p>
+<div class="hlcode"><pre><span class="o">-</span><span class="n">f</span> <span class="o">:</span> <span class="err">链接时先将与</span> <span class="n">dist</span> <span class="err">同档名的档案删除</span>
+<span class="o">-</span><span class="n">d</span> <span class="o">:</span> <span class="err">允许系统管理者硬链接自己的目录</span>
+<span class="o">-</span><span class="n">i</span> <span class="o">:</span> <span class="err">在删除与</span> <span class="n">dist</span> <span class="err">同档名的档案时先进行询问</span>
+<span class="o">-</span><span class="n">n</span> <span class="o">:</span> <span class="err">在进行软链接时，将</span> <span class="n">dist</span> <span class="err">视为一般的档案</span>
+<span class="o">-</span><span class="n">s</span> <span class="o">:</span> <span class="err">进行软链接</span><span class="p">(</span><span class="n">symbolic</span> <span class="n">link</span><span class="p">)</span>
+<span class="o">-</span><span class="n">v</span> <span class="o">:</span> <span class="err">在链接之前显示其档名</span>
+<span class="o">-</span><span class="n">b</span> <span class="o">:</span> <span class="err">将在链接时会被覆写或删除的档案进行备份</span>
+<span class="o">-</span><span class="n">S</span> <span class="n">SUFFIX</span> <span class="o">:</span> <span class="err">将备份的档案都加上</span> <span class="n">SUFFIX</span> <span class="err">的字尾</span>
+<span class="o">-</span><span class="n">V</span> <span class="n">METHOD</span> <span class="o">:</span> <span class="err">指定备份的方式</span>
+<span class="o">--</span><span class="n">help</span> <span class="o">:</span> <span class="err">显示辅助说明</span>
+<span class="o">--</span><span class="n">version</span> <span class="o">:</span> <span class="err">显示版本</span>
+</pre></div>
+
+
+<h2 id="_2">注意事项</h2>
+<ul>
+<li>
+<blockquote>
+<p>linux系统中的硬链接有两个限制：不能跨越文件系统和不允许普通用户对目录作硬链接。至于第一个限制，很好理解，而第二个就不那么好理解了。 我们对任何一个目录用ls -l 命令都可以看到其链接数至少是2，这也说明了系统中是存在硬链接的，而且命令ln -d 也可以让超级用户对目录作硬链接，这些都说明了系统限制对目录进行硬链接只是一个硬性规定，并不是逻辑上不允许或技术上的不可行。那么操作系统为什么要进行限制呢？
+如果引入了对目录的硬链接就有可能在目录中引入循环，那么在目录遍历的时候系统就会陷入无限循环当中。也许您会说，符号链接不也可以引入循环吗，那么为什么不限制目录的符号链接呢？原因就在于在linux系统中，每个文件(目录也是文件)都对应着一个inode结构，其中inode数据结构中包含了文件类型(目录，普通文件，符号链接文件等等)的信息，也就是说操作系统在遍历目录时可以判断出符号链接，既然可以判断出符号链接当然就可以采取一些措施来防范进入过大的循环了，系统在连续遇到8个符号链接后就停止遍历，这就是为什么对目录符号链接不会进入死循环的原因了。但是对于硬链接，由于操作系统中采用的数据结构和算法限制，目前是不能防范这种死循环的。</p>
+</blockquote>
+</li>
+<li>
+<p><code>-n</code> 的用途:在软链接目录的时候,如果你链接过去的目录已经存在的话,就会在产生目录嵌套的问题.<code>-n</code> 会将目录视为文件,这样子就避免目录嵌套.</p>
+</li>
+<li><code>ln source dest</code> 中的 <code>source</code> 最好写成绝对路径.</li>
+</ul>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2015 <a href="http://xiaohansong.com">HanSong Xiao</a>
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+            </span>
+        </div>
+    </body>
+</html>
