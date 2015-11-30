@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>EPOLL在ET和LT下的读写 - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#linux">linux</a> » EPOLL在ET和LT下的读写
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">EPOLL在ET和LT下的读写</div>
+    <div id="content">
+        <p>epoll是Linux上一个可扩展的I/O事件通知机制。主要有两种工作模式</p>
+<p><strong>Level Triggered ( LT )水平触发</strong>，默认方式，即当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序可以不立即处理该事件。下次调用epoll_wait时，会再次响应应用程序并通知此事件。</p>
+<p><strong>Edge Triggered ( ET )边缘触发</strong>，即当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序必须立即处理该事件。如果不处理，下次调用epoll_wait时，不会再次响应应用程序并通知此事件。</p>
+<p>注：ET模式在很大程度上减少了epoll事件被重复触发的次数，因此效率要比LT模式高。epoll工作在ET模式的时候，必须使用非阻塞套接口，以避免由于一个文件句柄的阻塞读/阻塞写操作把处理多个文件描述符的任务饿死。</p>
+<p>那么对应到socket编程中的accept, read, write，有必要详细说说。</p>
+<p>在LT模式下，accept,read,write和平时的编程方式并没有要特别注意的地方，因为只要对应的文件描述符中还有数据未读取或者处于可写状态，都会有通知。例如说，在read的时候没有一次性把缓冲区的数据全部读出来，那么epoll还会再次通知此事件。<strong>可以在阻塞和非阻塞的套接字上使用</strong>。</p>
+<p>然而，在ET模式下，epoll只在事件发生时发生通知，没有新的事件发生就不通知。例如，在read的时候没有一次性把缓冲区的数据全部读出来，那么epoll不会再次通知此事件。除非有新的事件发生，不然监听的描述符是无法被触发。<strong>只能在非阻塞的套接字上使用</strong>。</p>
+<blockquote>
+<p>Edge Triggered event distribution delivers events only when events happens on the monitored file 。</p>
+</blockquote>
+<p>ET模式下accept存在的问题
+考虑这种情况：多个连接同时到达，服务器的TCP就绪队列瞬间积累多个就绪连接，由于是边缘触发模式，epoll只会通知一次，accept只处理一个连接，导致TCP就绪队列中剩下的连接都得不到处理。</p>
+<p>解决办法是用while循环抱住accept调用，处理完TCP就绪队列中的所有连接后再退出循环。如何知道是否处理完就绪队列中的所有连接呢？accept返回-1并且errno设置为EAGAIN就表示所有连接都处理完。</p>
+<div class="hlcode"><pre><span class="k">while</span> <span class="p">((</span><span class="n">conn_sock</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">remote</span><span class="p">,</span> <span class="p">(</span><span class="kt">size_t</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">addrlen</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+     <span class="n">handle_client</span><span class="p">(</span><span class="n">conn_sock</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">conn_sock</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">EAGAIN</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">ECONNABORTED</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">EPROTO</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">EINTR</span><span class="p">)</span>
+    <span class="n">perror</span><span class="p">(</span><span class="s">&quot;accept&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>ET模式下，读取要一次把缓冲区的数据读完</p>
+<ul>
+<li>如果read返回0，那么说明已经接受所有数据</li>
+<li>如果errno=EAGAIN，说明还有数据未接收，等待下一次通知</li>
+<li>如果read返回-1，说明发生错误，停止处理</li>
+</ul>
+<blockquote>
+<p>Receiving an event from epoll_wait(2) should suggest to you that such file descriptor is ready for the requested I/O operation. You have simply to consider it ready until you will receive the next EAGAIN. When and how you will use such file descriptor is entirely up to you. Also, the condition that the read/write I/O space is exhausted can be detected by checking the amount of data read/write from/to the target file descriptor. For example, if you call read(2) by asking to read a certain amount of data and read(2) returns a lower number of bytes, you can be sure to have exhausted the read I/O space for such file descriptor. Same is valid when writing using the write(2) function.</p>
+</blockquote>
+<p>以上是官方文档的解释，一旦得到通知说明I/O已经准备好了，不管你什么时候去处理，可以保证读取完缓冲区的数据。写也是同样道理。</p>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2015 <a href="http://xiaohansong.com">HanSong Xiao</a>
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+            </span>
+        </div>
+    </body>
+</html>
