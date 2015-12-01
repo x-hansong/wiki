@@ -32,6 +32,7 @@
 <li><a href="#_3">问题原因</a></li>
 </ul>
 </li>
+<li><a href="#spring-data-jpa-repository">Spring Data JPA 自定义 Repository</a></li>
 </ul>
 </div>
 <h2 id="spring-data-jpa">Spring Data JPA映射表名大小写不敏感</h2>
@@ -49,6 +50,41 @@
 
 <h3 id="_3">问题原因</h3>
 <p>spring默认使用的hibernate naming-strategy是大小写不敏感的.</p>
+<h2 id="spring-data-jpa-repository">Spring Data JPA 自定义 Repository</h2>
+<p>根据官方文档的描述,默认的自定义行为需要三步:</p>
+<ul>
+<li>
+<p>声明一个自定义接口</p>
+<div class="hlcode"><pre><span class="n">interface</span> <span class="n">UserRepositoryCustom</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="n">someCustomMethod</span><span class="p">(</span><span class="n">User</span> <span class="n">user</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>实现上面的接口</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">UserRepositoryImpl</span> <span class="n">implements</span> <span class="n">UserRepositoryCustom</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="n">someCustomMethod</span><span class="p">(</span><span class="n">User</span> <span class="n">user</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Your custom implementation</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>同时继承内置的 Repository 和自定义的接口</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">interface</span> <span class="n">UserRepository</span> <span class="n">extends</span> <span class="n">CrudRepository</span><span class="o">&lt;</span><span class="n">User</span><span class="p">,</span> <span class="n">Long</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">UserRepositoryCustom</span> <span class="p">{</span>
+    <span class="c1">// Declare query methods here</span>
+<span class="p">}</span>
+</pre></div>
+
+
+</li>
+</ul>
+<p>值得注意的是,自定义的接口一定要以 <code>RepositoryCustom</code> 为后缀,自定义接口的实现一定要以 <code>RepositoryImpl</code> 作为后缀.Spring 会根据名字进行配置.</p>
+<p>当然,以上是默认的行为,你可以自己配置来更改默认的命名规范.详细操作查看官方文档.</p>
     </div>
 
         </div>
