@@ -18,3 +18,32 @@ date: 2015-10-19
     spring.jpa.hibernate.naming-strategy=org.hibernate.cfg.DefaultNamingStrategy
 ### 问题原因
 spring默认使用的hibernate naming-strategy是大小写不敏感的.
+
+## Spring Data JPA 自定义 Repository
+根据官方文档的描述,默认的自定义行为需要三步:
+
+- 声明一个自定义接口
+
+        interface UserRepositoryCustom {
+            public void someCustomMethod(User user);
+        }
+
+- 实现上面的接口
+
+        class UserRepositoryImpl implements UserRepositoryCustom {
+            public void someCustomMethod(User user) {
+                // Your custom implementation
+            }
+        }
+
+- 同时继承内置的 Repository 和自定义的接口
+
+        public interface UserRepository extends CrudRepository<User, Long>, UserRepositoryCustom {
+            // Declare query methods here
+        }
+
+值得注意的是,自定义的接口一定要以 `RepositoryCustom` 为后缀,自定义接口的实现一定要以 `RepositoryImpl` 作为后缀.Spring 会根据名字进行配置.
+
+当然,以上是默认的行为,你可以自己配置来更改默认的命名规范.详细操作查看官方文档.
+
+
