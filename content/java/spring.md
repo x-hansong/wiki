@@ -47,3 +47,10 @@ spring默认使用的hibernate naming-strategy是大小写不敏感的.
 当然,以上是默认的行为,你可以自己配置来更改默认的命名规范.详细操作查看官方文档.
 
 
+## Mysql 8 小时自动断开连接
+MySQL 的默认设置下，当一个连接的空闲时间超过8小时后，MySQL 就会断开该连接.
+
+解决方法是定时发送请求,连接就会重置连接时间.具体在 Spring Boot 的配置文件 `application.properties` 加入:
+
+    spring.datasource.test-on-borrow=true
+    spring.datasource.validation-query=SELECT 1
