@@ -33,6 +33,7 @@
 </ul>
 </li>
 <li><a href="#spring-data-jpa-repository">Spring Data JPA 自定义 Repository</a></li>
+<li><a href="#mysql-8">Mysql 8 小时自动断开连接</a></li>
 </ul>
 </div>
 <h2 id="spring-data-jpa">Spring Data JPA映射表名大小写不敏感</h2>
@@ -85,6 +86,12 @@
 </ul>
 <p>值得注意的是,自定义的接口一定要以 <code>RepositoryCustom</code> 为后缀,自定义接口的实现一定要以 <code>RepositoryImpl</code> 作为后缀.Spring 会根据名字进行配置.</p>
 <p>当然,以上是默认的行为,你可以自己配置来更改默认的命名规范.详细操作查看官方文档.</p>
+<h2 id="mysql-8">Mysql 8 小时自动断开连接</h2>
+<p>MySQL 的默认设置下，当一个连接的空闲时间超过8小时后，MySQL 就会断开该连接.</p>
+<p>解决方法是定时发送请求,连接就会重置连接时间.具体在 Spring Boot 的配置文件 <code>application.properties</code> 加入:</p>
+<div class="hlcode"><pre><span class="n">spring</span><span class="p">.</span><span class="n">datasource</span><span class="p">.</span><span class="n">test</span><span class="o">-</span><span class="n">on</span><span class="o">-</span><span class="n">borrow</span><span class="o">=</span><span class="nb">true</span>
+<span class="n">spring</span><span class="p">.</span><span class="n">datasource</span><span class="p">.</span><span class="n">validation</span><span class="o">-</span><span class="n">query</span><span class="o">=</span><span class="n">SELECT</span> <span class="mi">1</span>
+</pre></div>
     </div>
 
         </div>
