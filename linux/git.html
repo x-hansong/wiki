@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>git - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#linux">linux</a> » git
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">git</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#git">git 配置</a></li>
+<li><a href="#git_1">git 操作</a><ul>
+<li><a href="#_1">分支</a></li>
+<li><a href="#_2">远程仓库</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="git">git 配置</h2>
+<ol>
+<li>
+<p>设置记住 github 的用户密码，避免重复输入密码</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">global</span> <span class="n">credential</span><span class="p">.</span><span class="n">helper</span> <span class="n">wincred</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>设置 push 默认推送给远程同名的分支</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">global</span> <span class="n">push</span><span class="p">.</span><span class="k">default</span> <span class="n">current</span>
+</pre></div>
+
+
+</li>
+</ol>
+<h2 id="git_1">git 操作</h2>
+<h3 id="_1">分支</h3>
+<ol>
+<li>
+<p>切换远程分支</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">gh</span><span class="o">-</span><span class="n">pages</span> <span class="n">origin</span><span class="o">/</span><span class="n">gh</span><span class="o">-</span><span class="n">pages</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>查看所有分支</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">branch</span> <span class="o">-</span><span class="n">va</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>新建分支</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">issue</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>推送本地分支到远程仓库</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">issue</span>
+</pre></div>
+
+
+</li>
+</ol>
+<h3 id="_2">远程仓库</h3>
+<ol>
+<li>切换远程仓库链接<div class="hlcode"><pre><span class="n">git</span> <span class="n">remote</span> <span class="o">-</span><span class="n">v</span>         <span class="c1">//查看远程仓库链接</span>
+<span class="n">git</span> <span class="n">remote</span> <span class="n">set</span><span class="o">-</span><span class="n">url</span> <span class="n">origin</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/USERNAME/OTHERREPOSITORY.git</span>
+<span class="n">git</span> <span class="n">remote</span> <span class="n">set</span><span class="o">-</span><span class="n">url</span> <span class="n">origin</span> <span class="n">git</span><span class="err">@</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">:</span><span class="n">USERNAME</span><span class="o">/</span><span class="n">OTHERREPOSITORY</span><span class="p">.</span><span class="n">git</span>
+</pre></div>
+
+
+</li>
+</ol>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2016 <a href="http://xiaohansong.com">HanSong Xiao</a>
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+            </span>
+        </div>
+    </body>
+</html>
