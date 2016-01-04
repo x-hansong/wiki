@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>powershell - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#tool">tool</a> » powershell
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">powershell</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">前言</a></li>
+<li><a href="#scoop">scoop 的安装与使用</a><ul>
+<li><a href="#_2">常用软件</a><ul>
+<li><a href="#ps">PS 样式美化</a></li>
+<li><a href="#gnu">GNU 工具</a></li>
+<li><a href="#_3">其他软件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#psget">PsGet 的安装与使用</a><ul>
+<li><a href="#_4">常用模块</a><ul>
+<li><a href="#go">go 书签模块</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="_1">前言</h2>
+<p>Powershell 是 Windows 下新一代的 shell。我们可以使用 <a href="http://scoop.sh/">scoop</a> 来管理软件包，它可以让 PS 用起来像 linux shell 一样，可以使用大部分 GNU 工具。另外，还有一个 PS 模块管理工具 <a href="http://psget.net/">PsGet</a>，可以安装 PS 脚本工具。</p>
+<h2 id="scoop">scoop 的安装与使用</h2>
+<ol>
+<li>
+<p>安装</p>
+<p>打开 powershell，输入：</p>
+<div class="hlcode"><pre><span class="n">iex</span> <span class="p">(</span><span class="n">new</span><span class="o">-</span><span class="n">object</span> <span class="n">net</span><span class="p">.</span><span class="n">webclient</span><span class="p">).</span><span class="n">downloadstring</span><span class="p">(</span><span class="err">&#39;</span><span class="n">https</span><span class="o">:</span><span class="c1">//get.scoop.sh&#39;)</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>允许脚本执行</p>
+<div class="hlcode"><pre><span class="n">set</span><span class="o">-</span><span class="n">executionpolicy</span> <span class="n">unrestricted</span> <span class="o">-</span><span class="n">s</span> <span class="n">cu</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>安装软件包</p>
+<div class="hlcode"><pre><span class="n">scoop</span> <span class="n">install</span> <span class="n">curl</span>
+</pre></div>
+
+
+</li>
+</ol>
+<h3 id="_2">常用软件</h3>
+<h4 id="ps">PS 样式美化</h4>
+<ol>
+<li>
+<p>安装 config</p>
+<div class="hlcode"><pre><span class="n">scoop</span> <span class="n">install</span> <span class="n">concfg</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>导入 Solarized 主题</p>
+<div class="hlcode"><pre><span class="n">concfg</span> <span class="n">import</span> <span class="n">solarized</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>安装 pshazz，提供类似 linux shell 的 prompt，并且支持 git 分支显示和命令补全。</p>
+<div class="hlcode"><pre><span class="n">scoop</span> <span class="n">install</span> <span class="n">pshazz</span>
+</pre></div>
+
+
+</li>
+</ol>
+<h4 id="gnu">GNU 工具</h4>
+<p>scoop 提供许多 GNU 工具，例如说 curl，vim 等。可以直接 <code>scoop install vim</code> 安装。</p>
+<h4 id="_3">其他软件</h4>
+<p>scoop 的软件仓库是 <a href="https://github.com/lukesampson/scoop/tree/master/bucket">bucket</a>，可以查看然后选择想要的软件进行安装。</p>
+<h2 id="psget">PsGet 的安装与使用</h2>
+<ol>
+<li>
+<p>安装</p>
+<p>打开 powershell，输入：</p>
+<div class="hlcode"><pre><span class="p">(</span><span class="n">new</span><span class="o">-</span><span class="n">object</span> <span class="n">Net</span><span class="p">.</span><span class="n">WebClient</span><span class="p">).</span><span class="n">DownloadString</span><span class="p">(</span><span class="s">&quot;http://psget.net/GetPsGet.ps1&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">iex</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>安装模块</p>
+<div class="hlcode"><pre><span class="n">Install</span><span class="o">-</span><span class="n">Module</span> <span class="n">PsUrl</span>
+</pre></div>
+
+
+</li>
+</ol>
+<h3 id="_4">常用模块</h3>
+<p>PsGet 的模块仓库是 <a href="http://psget.net/directory/">modules</a></p>
+<h4 id="go">go 书签模块</h4>
+<div class="hlcode"><pre><span class="n">Install</span><span class="o">-</span><span class="n">Module</span> <span class="n">go</span>
+</pre></div>
+
+
+<p><a href="https://github.com/cameronharp/Go-Shell">使用指南</a></p>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2016 <a href="http://xiaohansong.com">HanSong Xiao</a>
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+            </span>
+        </div>
+    </body>
+</html>
