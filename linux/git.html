@@ -50,6 +50,13 @@
 
 
 </li>
+<li>
+<p>Windows 下大小写敏感设置。在windows下面将已经push到远端的文件，改变其文件名的大小写时，git默认会认为文件没有发生任何改动，从而拒绝提交和推送，原因是其默认配置为大小写不敏感，故须在bash下修改配置：</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">config</span> <span class="n">core</span><span class="p">.</span><span class="n">ignorecase</span> <span class="nb">false</span>
+</pre></div>
+
+
+</li>
 </ol>
 <h2 id="git_1">git 操作</h2>
 <h3 id="_1">分支</h3>
