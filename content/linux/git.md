@@ -14,6 +14,10 @@ date: 2015-01-04
 
         git config --global push.default current
 
+3. Windows 下大小写敏感设置。在windows下面将已经push到远端的文件，改变其文件名的大小写时，git默认会认为文件没有发生任何改动，从而拒绝提交和推送，原因是其默认配置为大小写不敏感，故须在bash下修改配置：
+
+        git config core.ignorecase false
+
 
 ## git 操作
 

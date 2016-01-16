@@ -15,4 +15,4 @@ date: 2015-09-20
     log.info('Copying files from public folder...');
     return fs.copyDir(publicDir, deployDir);
 ```
-在`fs.copyDir`插入`fs.writeFile(deployDir+'/CNAME', 'blog.xiaohansong.com');`
+在`fs.copyDir`上面插入`fs.writeFile(deployDir+'/CNAME', 'blog.xiaohansong.com');`
