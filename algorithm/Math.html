@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>数学相关 - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#algorithm">algorithm</a> » 数学相关
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">数学相关</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">进制转换</a></li>
+<li><a href="#_2">累加溢出</a></li>
+<li><a href="#2">快速判断一个数是否是2的指数</a></li>
+<li><a href="#_3">位操作</a><ul>
+<li><a href="#_4">基础</a></li>
+<li><a href="#_5">技巧</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="_1">进制转换</h2>
+<p>灵活利用<strong>取整取余</strong></p>
+<p>例如二进制计算：<code>a + b + carry = s ; remainder = s / 2; carry = s % 2</code></p>
+<h2 id="_2">累加溢出</h2>
+<p>利用公式的转换，把加法变为减法，避免溢出。利用结论：只有符号相同的整数相加才有可能才生溢出(overflow).</p>
+<div class="hlcode"><pre><span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="n">INT_MAX</span>  <span class="o">==&gt;</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">INT_MAX</span> <span class="err">–</span> <span class="n">b</span>
+<span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">INT_MIN</span>  <span class="o">==&gt;</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="n">INT_MIN</span> <span class="o">-</span> <span class="n">b</span>
+</pre></div>
+
+
+<h2 id="2">快速判断一个数是否是2的指数</h2>
+<div class="hlcode"><pre><span class="mi">2</span><span class="o">^</span><span class="n">n</span> <span class="o">=</span> <span class="mf">00..100</span><span class="p">.</span><span class="mf">.0</span>
+<span class="mi">2</span><span class="o">^</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span> <span class="o">=</span> <span class="mf">00.</span><span class="p">.</span><span class="mf">.011</span><span class="p">.</span><span class="mf">.1</span>  <span class="o">==&gt;</span> <span class="n">n</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="mi">2</span><span class="o">^</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mi">2</span><span class="o">^</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+
+
+<h2 id="_3">位操作</h2>
+<h3 id="_4">基础</h3>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>描述</th>
+<th>运算规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&amp;</td>
+<td>与</td>
+<td>两个位都为1时，结果才为1</td>
+</tr>
+<tr>
+<td>\</td>
+<td></td>
+<td>或</td>
+</tr>
+<tr>
+<td>^</td>
+<td>异或</td>
+<td>两个位相同为0，相异为1</td>
+</tr>
+<tr>
+<td>~</td>
+<td>取反</td>
+<td>0变1，1变0</td>
+</tr>
+<tr>
+<td>&lt;&lt;</td>
+<td>左移</td>
+<td>各二进位全部左移若干位，高位丢弃，低位补0</td>
+</tr>
+<tr>
+<td>>&gt;</td>
+<td>右移</td>
+<td>各二进位全部右移若干位，对无符号数，高位补0，有符号数，各编译器处理方法不一样，有的补符号位（算术右移），有的补0（逻辑右移）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>java 中逻辑右移的符号为 &gt;&gt;&gt; ，默认的 &gt;&gt; 是算术右移</p>
+</blockquote>
+<h3 id="_5">技巧</h3>
+<ol>
+<li>
+<p>判断奇偶
+    只要根据最未位是0还是1来决定，为0就是偶数，为1就是奇数。</p>
+<div class="hlcode"><pre><span class="k">if</span> <span class="p">((</span><span class="n">a</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>交换两数
+    第一步  a^=b 即a=(a^b);
+    第二步  b^=a 即b=b^(a^b)，由于^运算满足交换律，b^(a^b)=b^b^a。由于一个数和自己异或的结果为0并且任何数与0异或都会不变的，所以此时b被赋上了a的值。
+    第三步 a^=b 就是a=a^b，由于前面二步可知a=(a^b)，b=a，所以a=a^b即a=(a^b)^a。故a会被赋上b的值。</p>
+<div class="hlcode"><pre><span class="n">a</span> <span class="o">^=</span> <span class="n">b</span><span class="p">;</span>
+<span class="n">b</span> <span class="o">^=</span> <span class="n">a</span><span class="p">;</span>
+<span class="n">a</span> <span class="o">^=</span> <span class="n">b</span><span class="p">;</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>变换符号
+    取反后加一</p>
+<div class="hlcode"><pre><span class="o">~</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>绝对值
+    对于任何数，与0异或都会保持不变，与-1即0xFFFFFFFF异或就相当于取反。因此，a与i异或后再减i（因为i为0或-1，所以减i即是要么加0要么加1）也可以得到绝对值。</p>
+<div class="hlcode"><pre><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="mi">31</span><span class="p">;</span>
+<span class="k">return</span> <span class="p">((</span><span class="n">a</span> <span class="o">^</span> <span class="n">i</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">);</span>
+</pre></div>
+
+
+</li>
+</ol>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2016 <a href="http://xiaohansong.com">HanSong Xiao</a>
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+            </span>
+        </div>
+    </body>
+</html>

@@ -6,7 +6,7 @@
         <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
         <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
     	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
-        <title>Spring - Wiki | HanSong</title>
+        <title>Spring 实践 - Wiki | HanSong</title>
         <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
         <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -18,12 +18,12 @@
     <div id="header">
         <div id="post-nav">
             
-            <a href="/">Home</a> » <a href="/#java">java</a> » Spring
+            <a href="/">Home</a> » <a href="/#java">java</a> » Spring 实践
             
         </div>
     </div>
     <div class="clearfix"></div>
-    <div id="title">Spring</div>
+    <div id="title">Spring 实践</div>
     <div id="content">
         <div class="toc"><span class="toctitle">Table of Contents</span><ul>
 <li><a href="#spring-data-jpa">Spring Data JPA映射表名大小写不敏感</a><ul>
@@ -34,6 +34,7 @@
 </li>
 <li><a href="#spring-data-jpa-repository">Spring Data JPA 自定义 Repository</a></li>
 <li><a href="#mysql-8">Mysql 8 小时自动断开连接</a></li>
+<li><a href="#spring-data-jpa-hibernate-lazy-fetch">Spring data jpa 中 Hibernate 的 Lazy Fetch 失效问题解决</a></li>
 </ul>
 </div>
 <h2 id="spring-data-jpa">Spring Data JPA映射表名大小写不敏感</h2>
@@ -91,6 +92,16 @@
 <p>解决方法是定时发送请求,连接就会重置连接时间.具体在 Spring Boot 的配置文件 <code>application.properties</code> 加入:</p>
 <div class="hlcode"><pre><span class="n">spring</span><span class="p">.</span><span class="n">datasource</span><span class="p">.</span><span class="n">test</span><span class="o">-</span><span class="n">on</span><span class="o">-</span><span class="n">borrow</span><span class="o">=</span><span class="nb">true</span>
 <span class="n">spring</span><span class="p">.</span><span class="n">datasource</span><span class="p">.</span><span class="n">validation</span><span class="o">-</span><span class="n">query</span><span class="o">=</span><span class="n">SELECT</span> <span class="mi">1</span>
+</pre></div>
+
+
+<h2 id="spring-data-jpa-hibernate-lazy-fetch">Spring data jpa 中 Hibernate 的 Lazy Fetch 失效问题解决</h2>
+<p>Spring data jpa 的底层是 Hibernate，因为 Repository 接口方法的查询完成每次都会关闭 Session，所以 Hibernate 的 Lazy Fetch 会失败，解决办法是利用 Spring 的Transaction 来使 Repository 的查询方法不关闭 Session。具体操作是在需要使用 Lazy Fetch 的方法加上 <code>@Transaction</code> 的注解。</p>
+<div class="hlcode"><pre><span class="p">@</span><span class="nx">Transactional</span>
+<span class="k">public</span> <span class="nf">void</span> <span class="nx">testUser</span><span class="p">(){</span>
+    <span class="nb">User</span> <span class="n">user</span> <span class="o">=</span> <span class="nx">userRepository.findByName</span><span class="p">(</span><span class="s2">&quot;hansong&quot;</span><span class="p">);</span>
+    <span class="nb">Set</span><span class="o">&lt;</span><span class="nb">User</span><span class="o">&gt;</span> <span class="n">users</span> <span class="o">=</span> <span class="nx">user.getFriendList</span><span class="p">();</span>
+<span class="p">}</span>
 </pre></div>
     </div>
 
