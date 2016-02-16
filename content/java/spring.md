@@ -1,5 +1,5 @@
 ---
-title: Spring
+title: Spring 实践
 layout: page
 date: 2015-10-19
 ---
@@ -54,3 +54,12 @@ MySQL 的默认设置下，当一个连接的空闲时间超过8小时后，MySQ
 
     spring.datasource.test-on-borrow=true
     spring.datasource.validation-query=SELECT 1
+
+## Spring data jpa 中 Hibernate 的 Lazy Fetch 失效问题解决
+Spring data jpa 的底层是 Hibernate，因为 Repository 接口方法的查询完成每次都会关闭 Session，所以 Hibernate 的 Lazy Fetch 会失败，解决办法是利用 Spring 的Transaction 来使 Repository 的查询方法不关闭 Session。具体操作是在需要使用 Lazy Fetch 的方法加上 `@Transaction` 的注解。
+
+    @Transactional
+    public void testUser(){
+        User user = userRepository.findByName("hansong");
+        Set<User> users = user.getFriendList();
+    }
