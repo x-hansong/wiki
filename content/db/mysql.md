@@ -42,3 +42,31 @@ date: 2015-10-31
     - `vim /etc/mysql/my.cnf`
     - 注释掉`bind-address = 127.0.0.1`
     - 重启mysql
+
+## SQL逻辑查询语句执行顺序
+### SQL 语法
+```
+SELECT DISTINCT <select_list>
+FROM <left_table>
+<join_type> JOIN <right_table>
+ON <join_condition>
+WHERE <where_condition>
+GROUP BY <group_by_list>
+HAVING <having_condition>
+ORDER BY <order_by_condition>
+LIMIT <limit_number>
+```
+
+### SQL 执行顺序
+```
+(7)     SELECT
+(8)     DISTINCT <select_list>
+(1)     FROM <left_table>
+(3)     <join_type> JOIN <right_table>
+(2)     ON <join_condition>
+(4)     WHERE <where_condition>
+(5)     GROUP BY <group_by_list>
+(6)     HAVING <having_condition>
+(9)     ORDER BY <order_by_condition>
+(10)    LIMIT <limit_number>
+```
