@@ -5,6 +5,12 @@ date: 2015-10-19
 ---
 [TOC]
 
+## Spring 默认配置
+Spring 有很多的默认行为，有时候会被它的默认行为搞得一头雾水，下面记录坑过我的默认配置。
+
+1. Spring 中使用 JUnit @Test 注解的函数，如果加上 @Transactional 启动事务，默认在函数结束时会自动回滚。这样的话很方便测试，而不会对数据库有副作用。（但是我不知道的时候，以为出了bug，查了好久才发现原因。）
+
+
 ## Spring Data JPA映射表名大小写不敏感
 > add at 2015-10-19
 
@@ -63,3 +69,5 @@ Spring data jpa 的底层是 Hibernate，因为 Repository 接口方法的查询
         User user = userRepository.findByName("hansong");
         Set<User> users = user.getFriendList();
     }
+
+
