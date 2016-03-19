@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>JVM - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#java">java</a> » JVM
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">JVM</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">内存模型</a></li>
+<li><a href="#_2">垃圾回收</a><ul>
+<li><a href="#_3">回收的对象</a><ul>
+<li><a href="#_4">可达性分析算法</a></li>
+<li><a href="#gc-roots">GC Roots 选择</a></li>
+<li><a href="#_5">引用</a></li>
+</ul>
+</li>
+<li><a href="#_6">回收的方法</a><ul>
+<li><a href="#_7">标记清除算法</a></li>
+<li><a href="#_8">复制算法</a></li>
+<li><a href="#_9">标记整理算法</a></li>
+<li><a href="#_10">分代收集算法</a></li>
+</ul>
+</li>
+<li><a href="#_11">垃圾收集器</a></li>
+</ul>
+</li>
+<li><a href="#_12">内存分配</a><ul>
+<li><a href="#_13">内存分配策略</a></li>
+<li><a href="#_14">内存布局</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="_1">内存模型</h2>
+<p><img alt="内存模型" src="http://7xjtfr.com1.z0.glb.clouddn.com/41376821593549120.jpg" /></p>
+<ol>
+<li>
+<p>程序计数器（线程私有）</p>
+<p>当前线程所执行的字节码的行号指示器。</p>
+</li>
+<li>
+<p>栈（线程私有）</p>
+<p>每个方法执行时会创建一个栈帧用于存储局部变量等信息。</p>
+</li>
+<li>
+<p>本地方法栈（类似栈）</p>
+<p>为虚拟机使用到的 Native 方法服务。</p>
+</li>
+<li>
+<p>堆（线程共享）</p>
+<p>存放对象实例，是垃圾收集器管理的主要区域。</p>
+</li>
+<li>
+<p>方法区（线程共享）</p>
+<p>用于存储已经被虚拟机加载的类信息，常量，静态变量，即时编译器编译后的代码等数据。（也被人称为“永久代”）
+运行时常量池位于这个区域，用于存放编译期生成的各种字面量和符号引用。</p>
+</li>
+</ol>
+<h2 id="_2">垃圾回收</h2>
+<h3 id="_3">回收的对象</h3>
+<p>堆中的对象</p>
+<h4 id="_4">可达性分析算法</h4>
+<p>从 GC Roots 出发，没有跟 GC Roots 引用链相连的对象可回收。</p>
+<h4 id="gc-roots">GC Roots 选择</h4>
+<ol>
+<li>栈中引用的对象</li>
+<li>方法区（永久代）中引用的对象</li>
+<li>本地方法栈中引用的对象</li>
+</ol>
+<h4 id="_5">引用</h4>
+<ol>
+<li><strong>强引用</strong>：不会被回收</li>
+<li><strong>软引用</strong>：内存不足时才会被回收</li>
+<li><strong>弱引用</strong>：只能生存到下一次垃圾收集发生之前</li>
+<li><strong>虚引用</strong>：被回收时能收到一个系统通知</li>
+</ol>
+<h3 id="_6">回收的方法</h3>
+<h4 id="_7">标记清除算法</h4>
+<p>标记需要回收的对象，标记完成之后清除被标记对象。</p>
+<p>缺点：效率低，空间碎片</p>
+<h4 id="_8">复制算法</h4>
+<p>把内存空间分为两块，只使用其中的一块，满了之后把存活的对象复制到另一块，清除本块的对象。</p>
+<p>缺点：存活率大时需要较多复制操作。</p>
+<h4 id="_9">标记整理算法</h4>
+<p>标记回收对象之后，把它们移动到一端，清除端边界外的对象。</p>
+<h4 id="_10">分代收集算法</h4>
+<p>把堆分为两块：</p>
+<ol>
+<li><strong>新生代</strong>：使用复制算法。（包括一个Eden空间和两个survivor空间）</li>
+<li><strong>老年代</strong>：使用标记清除或标记整理算法。</li>
+</ol>
+<h3 id="_11">垃圾收集器</h3>
+<p><img alt="垃圾收集器" src="http://7xjtfr.com1.z0.glb.clouddn.com/20130925212623125.jpg" /></p>
+<ol>
+<li>Serial: 单线程收集器，工作时暂停其他工作线程。常用于Client模式，在新生代采用复制算法，在老生代使用标记-整理算法</li>
+<li>ParNew: Serial 多线程版本，并行收集器，主要用于新生代收集。与CMS收集器配合成为现在最常用的server收集器</li>
+<li>Parallel Scavenge 并行收集器，吞吐量（用户代码运行时间/用户代码运行时间+垃圾收集时间）优先。</li>
+<li>Serial Old: Serial 老年代版本，单线程，使用“标记整理”算法</li>
+<li>Parallel Old: Parallel Scavenge 的老年代版本。</li>
+<li>
+<p>CMS: 并发收集，低停顿，基于“标记-清除”算法。</p>
+<ol>
+<li>初始标记: 暂停工作线程，标记 GC Roots 能直接关联到的对象。</li>
+<li>并发标记：与工作线程并发，进行 GC Roots Tracing</li>
+<li>重新标记：暂停工作线程，修正并发标记过程中发生变动的对象。</li>
+<li>并发清除</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>对CPU资源非常敏感</li>
+<li>不能处理浮动垃圾（标记过程后出现的垃圾）</li>
+<li>产生空间碎片</li>
+</ol>
+</li>
+<li>
+<p>G1（Garbage First)</p>
+<p>特点：</p>
+<ol>
+<li>并行与并发</li>
+<li>分代收集（概念上分代，实际的内存布局不再是新生代，老年代隔离）</li>
+<li>空间整合（基于“标记整理”算法）</li>
+<li>可预测的停顿</li>
+<li>分 Region 收集，根据允许收集的时间，优先回收价值最大的 Region</li>
+</ol>
+<p>过程：</p>
+<ol>
+<li>初始标记</li>
+<li>并发标记</li>
+<li>最终标记：并行</li>
+<li>筛选回收：并行</li>
+</ol>
+</li>
+</ol>
+<h2 id="_12">内存分配</h2>
+<ul>
+<li>新生代GC（Minor GC）：发生在新生代的垃圾收集，速度比较块。</li>
+<li>老年代GC （Major GC/Full GC）：发生在老年代的垃圾收集，速度比较慢。</li>
+</ul>
+<h3 id="_13">内存分配策略</h3>
+<ol>
+<li>对象优先在Eden分配</li>
+<li>大对象直接进入老年代</li>
+<li>长期存活的对象将进入老年代：对象年龄达到设定值</li>
+<li>动态对象年龄判定：如果Survivor空间中相同年龄所有对象的大小总和大于Survivor空间的一半，大于等于该年龄的对象进入老年代</li>
+<li>空间分配担保：发生Minor GC之前，虚拟机会检查老年代的可用空间是否大于新生代所有对象的空间，条件成立则Minor GC是安全的</li>
+</ol>
+<h3 id="_14">内存布局</h3>
+<p><img alt="内存布局" src="http://7xjtfr.com1.z0.glb.clouddn.com/06524e23ef9136970be290e3732c0066_thumb.jpg" /></p>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2016 <a href="http://xiaohansong.com">HanSong Xiao</a>
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+            </span>
+        </div>
+    </body>
+</html>

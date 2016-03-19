@@ -34,6 +34,13 @@
 </li>
 <li><a href="#string-final">String 类是 final 的</a></li>
 <li><a href="#concurrenthashmap">ConcurrentHashMap</a></li>
+<li><a href="#final">final</a><ul>
+<li><a href="#final-data">final data</a></li>
+<li><a href="#final-methods">final methods</a></li>
+<li><a href="#final-classes">final classes</a></li>
+</ul>
+</li>
+<li><a href="#stactic">stactic</a></li>
 </ul>
 </div>
 <h2 id="volatile">Volatile</h2>
@@ -74,6 +81,44 @@
 <p>使用分离锁，减小了请求 同一个锁的频率。</p>
 <p>通过 HashEntery 对象的不变性及对同一个 Volatile 变量的读 / 写来协调内存可见性，使得 读操作大多数时候不需要加锁就能成功获取到需要的值。由于散列映射表在实际应用中大多数操作都是成功的 读操作，所以 2 和 3 既可以减少请求同一个锁的频率，也可以有效减少持有锁的时间。</p>
 <p>通过减小请求同一个锁的频率和尽量减少持有锁的时间 ，使得 ConcurrentHashMap 的并发性相对于 HashTable 和用同步包装器包装的 HashMap有了质的提高。</p>
+<h2 id="final">final</h2>
+<h3 id="final-data">final data</h3>
+<ol>
+<li>原生类型，final 使数据常量化</li>
+<li>使对象引用不变</li>
+</ol>
+<p>final 允许声明变量时不初始化，但是编译器会保证该变量被使用前被初始化。</p>
+<h3 id="final-methods">final methods</h3>
+<ol>
+<li>final 函数无法在子类中被覆盖</li>
+<li>编译器可以将该函数内联，此时编译器不使用动态绑定</li>
+<li>private 函数隐含 final</li>
+</ol>
+<h3 id="final-classes">final classes</h3>
+<p>无法被继承</p>
+<h2 id="stactic">stactic</h2>
+<ol>
+<li>
+<p>variable (also known as class variable)</p>
+<p>对于静态变量在内存中只有一个拷贝（节省内存），JVM只为静态分配一次内存，在加载类的过程中完成静态变量的内存分配，可用类名直接访问（方便），当然也可以通过对象来访问（但是这是不推荐的）。</p>
+<p>对于实例变量，没创建一个实例，就会为实例变量分配一次内存，实例变量可以在内存中有多个拷贝，互不影响（灵活）。</p>
+</li>
+<li>
+<p>method (also known as class method)</p>
+<p>静态方法可以直接通过类名调用，任何的实例也都可以调用，</p>
+<p>因此静态方法中不能用this和super关键字，不能直接访问所属类的实例变量和实例方法(就是不带static的成员变量和成员成员方法)，只能访问所属类的静态成员变量和成员方法。</p>
+<p>类的构造方法隐含是 static。</p>
+</li>
+<li>
+<p>block</p>
+<p>static代码块也叫静态代码块，是在类中独立于类成员的static语句块，可以有多个，位置可以随便放，它不在任何的方法体内，JVM加载类时会执行这些静态的代码块，如果static代码块有多个，JVM将按照它们在类中出现的先后顺序依次执行它们，每个代码块只会被执行一次。</p>
+</li>
+<li>
+<p>nested class</p>
+<p>static修饰符使得嵌套类对象成为外部类的静态成员，与外部类直接关联。</p>
+<p>这样静态嵌套类作为一个静态成员，仅能访问外部类的静态成员，因为外部类中的非静态成员与外部类对象相关，静态嵌套类就不能访问他们，这使得静态嵌套类的功能变的很弱，可用之处很少。</p>
+</li>
+</ol>
     </div>
 
         </div>
