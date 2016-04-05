@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>IO - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#kernel">kernel</a> » IO
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">IO</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#unix-io">UNIX IO 模型</a></li>
+</ul>
+</div>
+<h2 id="unix-io">UNIX IO 模型</h2>
+<ol>
+<li>阻塞I/O</li>
+<li>非阻塞I/O</li>
+<li>I/O复用（select、poll、linux 2.6种改进的epoll）</li>
+<li>信号驱动IO（SIGIO）</li>
+<li>异步I/O（POSIX的aio_系列函数）</li>
+</ol>
+<p><img alt="unix io 模型" src="http://7xjtfr.com1.z0.glb.clouddn.com/unix_io_model.jpg" /></p>
+<p>POSIX把I/O操作划分成两类：</p>
+<ol>
+<li>同步I/O: 同步I/O操作导致请求进程阻塞，直至操作完成</li>
+<li>异步I/O: 异步I/O操作不导致请求阻塞</li>
+</ol>
+<p>所以Unix的前四种I/O模型都是同步I/O, 只有最后一种才是异步I/O。</p>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2016 <a href="http://xiaohansong.com">HanSong Xiao</a>
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+            </span>
+        </div>
+    </body>
+</html>

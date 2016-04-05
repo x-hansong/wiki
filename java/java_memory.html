@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>Java 内存模型 - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#java">java</a> » Java 内存模型
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">Java 内存模型</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">主内存和工作内存</a></li>
+<li><a href="#_2">内存间交互操作</a></li>
+<li><a href="#volatile">对于volatile型变量的特殊规则</a></li>
+<li><a href="#_3">原子性，可见性和有序性</a><ul>
+<li><a href="#_4">重排序</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p><em>本文是《深入理解java虚拟机》的读书笔记</em></p>
+<h2 id="_1">主内存和工作内存</h2>
+<p>Java 内存模型规定所有变量都存储在主内存中（类比物理内存），每条线程还有自己的工作内存（类比处理器的高速缓存），线程的工作内存保存了该线程使用到的变量的主内存副本拷贝（仅保存用到的字段），线程对变量的所有操作都必须在工作内存中进行，而不能直接读写主内存中的变量。不同线程直接也无法直接访问对方工作内存中的变量，线程间变量值的传递均需要主内存完成。</p>
+<p><img alt="java 内存模型" src="http://7xjtfr.com1.z0.glb.clouddn.com/091134177063947.jpg" /></p>
+<h2 id="_2">内存间交互操作</h2>
+<p>主内存和工作内存之间有8种原子操作</p>
+<ol>
+<li><strong>lock</strong>：作用于主内存的变量，它把一个变量标识为一条线程独占的状态</li>
+<li><strong>unlock</strong>：解锁被lock的变量</li>
+<li><strong>read</strong>：作用于主内存的变量，把一个变量的值从主内存传输到线程的工作线程中，以便随后的load使用</li>
+<li><strong>load</strong>：作用于工作内存的变量，把read操作从主内存中得到的变量值放入工作内存的变量副本中</li>
+<li><strong>use</strong>：作用于工作内存的变量，把工作内存中的变量值传递给执行引擎</li>
+<li><strong>assign</strong>：作用于工作内存的变量，把从执行引擎得到的值赋给工作内存中的变量</li>
+<li><strong>store</strong>：作用于工作内存的变量，把工作内存中的一个变量值传送到主内存中，以便随后的write操作使用</li>
+<li><strong>write</strong>：作用于主内存的变量，把store操作从工作内存中得到的变量值放入主内存的变量中</li>
+</ol>
+<h2 id="volatile">对于volatile型变量的特殊规则</h2>
+<ol>
+<li>volatile 变量在各个线程中都是一致的（这不能保证并发安全，因为读写操作不能保证是原子性的）</li>
+<li>禁止指令重排序优化</li>
+</ol>
+<p>volatile 变量的读操作性能消耗跟普通变量几乎没有差别，写操作会慢一点，因为它需要在本地代码中插入许多内存屏障指令来保证处理器不发生乱序执行。</p>
+<p>volatile 的语义实现主要是通过设计原子操作的特殊规则实现的。</p>
+<ol>
+<li>每次修改 volatile 变量马上写回主内存</li>
+<li>每次读取 volatile 变量从内存中读取最新的值</li>
+<li>通过内存屏障指令防止指令重排序优化</li>
+</ol>
+<h2 id="_3">原子性，可见性和有序性</h2>
+<p><strong>原子性</strong>：基本数据类型的读写是原子的
+<strong>可见性</strong>：当一个线程修改了共享变量的值，其他线程能立刻得知这个修改
+<strong>有序性</strong></p>
+<h3 id="_4">重排序</h3>
+<p>大多数现代微处理器都会采用将指令乱序执行（out-of-order execution，简称OoOE或OOE）的方法，在条件允许的情况下，直接运行当前有能力立即执行的后续指令，避开获取下一条指令所需数据时造成的等待3。通过乱序执行的技术，处理器可以大大提高执行效率。
+除了处理器，常见的Java运行时环境的JIT编译器也会做指令重排序操作，即生成的机器指令与字节码指令顺序不一致。</p>
+<p>重排序分成三种类型：</p>
+<ol>
+<li>编译器优化的重排序。编译器在不改变单线程程序语义放入前提下，可以重新安排语句的执行顺序。</li>
+<li>指令级并行的重排序。现代处理器采用了指令级并行技术来将多条指令重叠执行。如果不存在数据依赖性，处理器可以改变语句对应机器指令的执行顺序。</li>
+<li>内存系统的重排序。由于处理器使用缓存和读写缓冲区，这使得加载和存储操作看上去可能是在乱序执行。</li>
+</ol>
+<p>为了保证内存的可见性，Java编译器在生成指令序列的适当位置会插入内存屏障指令来禁止特定类型的处理器重排序。Java内存模型把内存屏障分为LoadLoad、LoadStore、StoreLoad和StoreStore四种：</p>
+<p><strong>内存屏障</strong>：一个实现是通过 lock 指令强制将前面操作完成的修改从 CPU 的 cache 中写入到内存。</p>
+<p><img alt="内存屏障" src="http://7xjtfr.com1.z0.glb.clouddn.com/091516513623330.png" /></p>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2016 <a href="http://xiaohansong.com">HanSong Xiao</a>
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+            </span>
+        </div>
+    </body>
+</html>
