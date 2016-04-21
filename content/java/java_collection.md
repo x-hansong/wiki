@@ -42,3 +42,39 @@ hash函数的实现：高16bit不变，低16bit和高16bit做了一个异或。
 ![](http://7xjtfr.com1.z0.glb.clouddn.com/519be432-d93c-11e4-85bb-dff0a03af9d3.png)
 
 因此，我们在扩充HashMap的时候，不需要重新计算hash，只需要看看原来的hash值新增的那个bit是1还是0就好了，是0的话索引没变，是1的话索引变成“原索引+oldCap”。
+
+### HashMap的装箱空间效率
+在笔试题中，一般“内存”是完全能够使用的，而在现实中HashMap空间效率之低，你却不一定知道。
+
+比如定义了一个 HashMap<Long,Long>
+
+1. Long的装箱
+
+    在对象头中，加入额外的指针8Bype，加入8Bype的MarkWord(hashcode与锁信息)，这里就是16Byte。
+
+    也就是说，long在装箱后，效率为 8/24 = 1/3
+
+2. Map.Entry的装箱
+
+    字段空间: hash(4) + padding(4) ＋ next(8) = 16Byte，这里的padding是字节对齐
+
+    对象头: 16Byte，指针+MarkWord
+
+    也就是说，维护一个Entry需要32Byte的空间
+
+        static class Node<K,V> implements Map.Entry<K,V>
+        {
+            final int hash;
+            final K key;
+            V value;
+            Node<K,V> next;
+        }
+
+3. 总效率
+
+    8/(24 + 32) = 1/7
+
+
+## LinkedHashMap
+一个 Map 接口的实现，与 HashMap 不同的是，它维护了一个 Entry 的双向链表，因此其迭代的顺序是可预测的，支持按插入顺序或者访问顺序迭代元素。其 Entry 比 HashMap 的 Entry 多了首尾指针。
+
