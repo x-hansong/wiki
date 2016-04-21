@@ -36,6 +36,7 @@
 <li><a href="#_3">可能出现的问题</a></li>
 </ul>
 </li>
+<li><a href="#sql_1">SQL 语法</a></li>
 </ul>
 </div>
 <h2 id="_1">基本命令</h2>
@@ -93,6 +94,103 @@
 </ul>
 </li>
 </ol>
+<h2 id="sql_1">SQL 语法</h2>
+<table>
+<thead>
+<tr>
+<th>语法</th>
+<th>语义</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>create database 数据库名 [其他选项];</td>
+<td>创建数据库</td>
+<td>create database samp_db character set gbk;</td>
+</tr>
+<tr>
+<td>show databases;</td>
+<td>查看已经创建的数据库</td>
+<td></td>
+</tr>
+<tr>
+<td>use 数据库名;</td>
+<td>选择某个数据库进行操作</td>
+<td></td>
+</tr>
+<tr>
+<td>create table 表名称(列声明);</td>
+<td>创建表</td>
+<td>create table students（id int unsigned not null auto_increment primary key, name char(8) not null,sex char(4) not null, age tinyint unsigned not null, tel char(13) null default "-");</td>
+</tr>
+<tr>
+<td>show tables</td>
+<td>查看表</td>
+<td></td>
+</tr>
+<tr>
+<td>describe 表名</td>
+<td>查看表的结构</td>
+<td></td>
+</tr>
+<tr>
+<td>show create table 表名</td>
+<td>查看表的创建语句</td>
+<td></td>
+</tr>
+<tr>
+<td>insert [into] 表名 [(列名1, 列名2, 列名3, ...)] values (值1, 值2, 值3, ...);</td>
+<td>插入值</td>
+<td></td>
+</tr>
+<tr>
+<td>select 列名称 from 表名称 [查询条件];</td>
+<td>查询表中的数据</td>
+<td></td>
+</tr>
+<tr>
+<td>update 表名称 set 列名称=新值 where 更新条件;</td>
+<td>更新表中的数据</td>
+<td></td>
+</tr>
+<tr>
+<td>delete from 表名称 where 删除条件;</td>
+<td>删除表中的数据</td>
+<td></td>
+</tr>
+<tr>
+<td>alter table 表名 add 列名 列数据类型 [after 插入位置];</td>
+<td>添加列</td>
+<td></td>
+</tr>
+<tr>
+<td>alter table 表名 change 列名称 列新名称 新数据类型;</td>
+<td>修改列</td>
+<td></td>
+</tr>
+<tr>
+<td>alter table 表名 drop 列名称;</td>
+<td>删除列</td>
+<td></td>
+</tr>
+<tr>
+<td>alter table 表名 rename 新表名;</td>
+<td>重命名表</td>
+<td></td>
+</tr>
+<tr>
+<td>drop table 表名;</td>
+<td>删除表</td>
+<td></td>
+</tr>
+<tr>
+<td>drop database 数据库名;</td>
+<td>删除数据库</td>
+<td></td>
+</tr>
+</tbody>
+</table>
     </div>
 
         </div>

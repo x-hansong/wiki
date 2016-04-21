@@ -31,8 +31,10 @@
 <li><a href="#get">get函数的实现</a></li>
 <li><a href="#hash">hash函数的实现</a></li>
 <li><a href="#resize">resize的实现</a></li>
+<li><a href="#hashmap_1">HashMap的装箱空间效率</a></li>
 </ul>
 </li>
+<li><a href="#linkedhashmap">LinkedHashMap</a></li>
 </ul>
 </div>
 <h2 id="hashmap">HashMap</h2>
@@ -62,6 +64,38 @@
 <p>因此元素在重新计算hash之后，因为n变为2倍，那么n-1的mask范围在高位多1bit(红色)，因此新的index就会发生这样的变化：</p>
 <p><img alt="" src="http://7xjtfr.com1.z0.glb.clouddn.com/519be432-d93c-11e4-85bb-dff0a03af9d3.png" /></p>
 <p>因此，我们在扩充HashMap的时候，不需要重新计算hash，只需要看看原来的hash值新增的那个bit是1还是0就好了，是0的话索引没变，是1的话索引变成“原索引+oldCap”。</p>
+<h3 id="hashmap_1">HashMap的装箱空间效率</h3>
+<p>在笔试题中，一般“内存”是完全能够使用的，而在现实中HashMap空间效率之低，你却不一定知道。</p>
+<p>比如定义了一个 HashMap<Long,Long></p>
+<ol>
+<li>
+<p>Long的装箱</p>
+<p>在对象头中，加入额外的指针8Bype，加入8Bype的MarkWord(hashcode与锁信息)，这里就是16Byte。</p>
+<p>也就是说，long在装箱后，效率为 8/24 = 1/3</p>
+</li>
+<li>
+<p>Map.Entry的装箱</p>
+<p>字段空间: hash(4) + padding(4) ＋ next(8) = 16Byte，这里的padding是字节对齐</p>
+<p>对象头: 16Byte，指针+MarkWord</p>
+<p>也就是说，维护一个Entry需要32Byte的空间</p>
+<div class="hlcode"><pre><span class="k">static</span> <span class="n">class</span> <span class="n">Node</span><span class="o">&lt;</span><span class="n">K</span><span class="p">,</span><span class="n">V</span><span class="o">&gt;</span> <span class="n">implements</span> <span class="n">Map</span><span class="p">.</span><span class="n">Entry</span><span class="o">&lt;</span><span class="n">K</span><span class="p">,</span><span class="n">V</span><span class="o">&gt;</span>
+<span class="p">{</span>
+    <span class="n">final</span> <span class="kt">int</span> <span class="n">hash</span><span class="p">;</span>
+    <span class="n">final</span> <span class="n">K</span> <span class="n">key</span><span class="p">;</span>
+    <span class="n">V</span> <span class="n">value</span><span class="p">;</span>
+    <span class="n">Node</span><span class="o">&lt;</span><span class="n">K</span><span class="p">,</span><span class="n">V</span><span class="o">&gt;</span> <span class="n">next</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>总效率</p>
+<p>8/(24 + 32) = 1/7</p>
+</li>
+</ol>
+<h2 id="linkedhashmap">LinkedHashMap</h2>
+<p>一个 Map 接口的实现，与 HashMap 不同的是，它维护了一个 Entry 的双向链表，因此其迭代的顺序是可预测的，支持按插入顺序或者访问顺序迭代元素。其 Entry 比 HashMap 的 Entry 多了首尾指针。</p>
     </div>
 
         </div>
