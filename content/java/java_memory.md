@@ -56,3 +56,12 @@ volatile 的语义实现主要是通过设计原子操作的特殊规则实现�
 **内存屏障**：一个实现是通过 lock 指令强制将前面操作完成的修改从 CPU 的 cache 中写入到内存。
 
 ![内存屏障](http://7xjtfr.com1.z0.glb.clouddn.com/091516513623330.png)
+
+## Happens-before 关系
+happens-before 关系保证：如果线程 A 与线程 B 满足 happens-before 关系，则线程 A 执行动作的结果对于线程 B 是可见的。如果两个操作未按 happens-before 排序，JVM 将可以对他们任意重排序。
+下面介绍几个与理解 ConcurrentHashMap 有关的 happens-before 关系法则：
+
+1. 程序次序法则：如果在程序中，所有动作 A 出现在动作 B 之前，则线程中的每种动作 A 都 happens-before 于该线程中的每一个动作 B。
+2. 监视器锁法则：对一个监视器的解锁 happens-before 于每个后续对同一监视器的加锁。
+3. Volatile 变量法则：对 Volatile 域的写入操作 happens-before 于每个后续对同一 Volatile 的读操作。
+4. 传递性：如果 A happens-before 于 B，且 B happens-before C，则 A happens-before C。

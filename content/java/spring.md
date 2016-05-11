@@ -22,7 +22,9 @@ Spring 有很多的默认行为，有时候会被它的默认行为搞得一头�
 我使用的是spring boot,所以只需要在`application.properties`中加入
 
     spring.jpa.hibernate.naming-strategy=org.hibernate.cfg.DefaultNamingStrategy
+
 ### 问题原因
+
 spring默认使用的hibernate naming-strategy是大小写不敏感的.
 
 ## Spring Data JPA 自定义 Repository
@@ -70,4 +72,18 @@ Spring data jpa 的底层是 Hibernate，因为 Repository 接口方法的查询
         Set<User> users = user.getFriendList();
     }
 
+## Spring 使用InitBinder绑定Validators
 
+    @InitBinder("userDTO")//这里要填需要校验的变量名
+    protected void initUserDTOBinder(WebDataBinder binder) {
+        binder.addValidators(new UserDTOValidator());
+    }
+
+    @InitBinder("codePhoneDTO")
+    protected void initCodePhoneDTOBinder(WebDataBinder binder){
+        binder.addValidators(new CodePhoneDTOValidator());
+    }
+
+如果`@InitBinder`不填变量名，默认是对所有 SpringMVC 输入变量进行校验。
+
+`Validator`需要实现`org.springframework.validation.Validator`接口。
