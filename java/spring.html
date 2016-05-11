@@ -36,6 +36,7 @@
 <li><a href="#spring-data-jpa-repository">Spring Data JPA 自定义 Repository</a></li>
 <li><a href="#mysql-8">Mysql 8 小时自动断开连接</a></li>
 <li><a href="#spring-data-jpa-hibernate-lazy-fetch">Spring data jpa 中 Hibernate 的 Lazy Fetch 失效问题解决</a></li>
+<li><a href="#spring-initbindervalidators">Spring 使用InitBinder绑定Validators</a></li>
 </ul>
 </div>
 <h2 id="spring">Spring 默认配置</h2>
@@ -109,6 +110,23 @@
     <span class="nb">Set</span><span class="o">&lt;</span><span class="nb">User</span><span class="o">&gt;</span> <span class="n">users</span> <span class="o">=</span> <span class="nx">user.getFriendList</span><span class="p">();</span>
 <span class="p">}</span>
 </pre></div>
+
+
+<h2 id="spring-initbindervalidators">Spring 使用InitBinder绑定Validators</h2>
+<div class="hlcode"><pre><span class="err">@</span><span class="n">InitBinder</span><span class="p">(</span><span class="s">&quot;userDTO&quot;</span><span class="p">)</span><span class="c1">//这里要填需要校验的变量名</span>
+<span class="n">protected</span> <span class="kt">void</span> <span class="n">initUserDTOBinder</span><span class="p">(</span><span class="n">WebDataBinder</span> <span class="n">binder</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">binder</span><span class="p">.</span><span class="n">addValidators</span><span class="p">(</span><span class="n">new</span> <span class="n">UserDTOValidator</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="err">@</span><span class="n">InitBinder</span><span class="p">(</span><span class="s">&quot;codePhoneDTO&quot;</span><span class="p">)</span>
+<span class="n">protected</span> <span class="kt">void</span> <span class="n">initCodePhoneDTOBinder</span><span class="p">(</span><span class="n">WebDataBinder</span> <span class="n">binder</span><span class="p">){</span>
+    <span class="n">binder</span><span class="p">.</span><span class="n">addValidators</span><span class="p">(</span><span class="n">new</span> <span class="n">CodePhoneDTOValidator</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>如果<code>@InitBinder</code>不填变量名，默认是对所有 SpringMVC 输入变量进行校验。</p>
+<p><code>Validator</code>需要实现<code>org.springframework.validation.Validator</code>接口。</p>
     </div>
 
         </div>

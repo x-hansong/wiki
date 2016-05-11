@@ -27,6 +27,8 @@
     <div id="content">
         <div class="toc"><span class="toctitle">Table of Contents</span><ul>
 <li><a href="#_1">线程的状态</a></li>
+<li><a href="#java">Java 对象头与锁</a></li>
+<li><a href="#jvm">JVM中锁的优化</a></li>
 </ul>
 </div>
 <h2 id="_1">线程的状态</h2>
@@ -46,6 +48,59 @@
 <p>死亡状态（Dead）：线程执行完了或者因异常退出了run()方法，该线程结束生命周期。</p>
 </li>
 </ol>
+<h2 id="java">Java 对象头与锁</h2>
+<p>Java对象有包含两个Word的头部。其中，第一个word被称为mark word，用来包含和垃圾收集、hash码的一些信息。第二个word用来指向对象的类。</p>
+<p><img alt="" src="http://7xjtfr.com1.z0.glb.clouddn.com/051358589904735.jpg" /></p>
+<p>第一个word的解释比较复杂，它包含两个bit用于指明mark word的用途。</p>
+<ul>
+<li>00: 表明这个对象处于lightweight locked的状态，其余的bit表示一个指向lock record的指针</li>
+<li>
+<p>01:</p>
+<ul>
+<li>001: 表明这个对象没有被锁住，其余的bit表示hash, age</li>
+<li>101: 表明这个对象可以被biasable的锁住，其余的bit标明biasable锁的threadID, epoch和age.</li>
+</ul>
+</li>
+<li>
+<p>10: 表明这个对象被锁住，并且有冲突发生，因而正在被复杂而低效的操作系统同步机制保护。剩余的bit是一个指向monitor的指针。</p>
+</li>
+<li>11: 这个对象被GC标明为垃圾</li>
+</ul>
+<p>接下来，我们要谈谈对锁的优化。从文章《HotSpot: A new breed of virtual machine
+》中，我们可以看到早期的JVM花在线程同步上的开销是惊人的，线程同步的开销占到了执行时间的21%。而且这个开销不能简单的被JIT优化掉。因此，众多牛人提出了对锁的很多优化。</p>
+<p>目前，JDK中最新的Biased锁是基于下面的观察：</p>
+<ol>
+<li>轻量级锁处理中必定会用到的CAS(Compare and Set)操作相当慢，需要超过百个以上的cpu cycle</li>
+<li>
+<p>通常一个锁只被一个线程访问。而且可能是被同一个线程反复的访问，因此反复的CAS会很大程度上影响应用程序的性能
+Biased锁将会尝试声明某个对象属于一个特定的线程，这个线程对对象的lock和unlock操作不需要进行CAS。如果其他线程想lock这个对象，那么它会把这个线程的biased的状态撤销，使其利用普通的锁机制。这样的话，在JDK中lock和unlock的流程就是这样的：</p>
+<p>void lock(Object obj, Thread currentTr){
+    if( obj biased to currentTr)
+        return;
+    if( obj biased to other thread)
+        pause owner thread at safe point
+        change mark word and lock record to pretend that obj is locked by other thread with general lock.
+    else{
+         //fall to common lock
+    }
+}</p>
+<p>void unlock(Object obj, Thread currentTr){
+    if( obj biased to currentTr)
+        return .
+    else
+        fall to common lock
+}</p>
+</li>
+</ol>
+<h2 id="jvm">JVM中锁的优化</h2>
+<p>简单来说在JVM中monitorenter和monitorexit字节码依赖于底层的操作系统的Mutex Lock来实现的，但是由于使用Mutex Lock需要将当前线程挂起并从用户态切换到内核态来执行，这种切换的代价是非常昂贵的；然而在现实中的大部分情况下，同步方法是运行在单线程环境（无锁竞争环境）如果每次都调用Mutex Lock那么将严重的影响程序的性能。不过在jdk1.6中对锁的实现引入了大量的优化，如锁粗化（Lock Coarsening）、锁消除（Lock Elimination）、轻量级锁（Lightweight Locking）、偏向锁（Biased Locking）、适应性自旋（Adaptive Spinning）等技术来减少锁操作的开销。</p>
+<ul>
+<li>锁粗化（Lock Coarsening）：也就是减少不必要的紧连在一起的unlock，lock操作，将多个连续的锁扩展成一个范围更大的锁。</li>
+<li>锁消除（Lock Elimination）：通过运行时JIT编译器的逃逸分析来消除一些没有在当前同步块以外被其他线程共享的数据的锁保护，通过逃逸分析也可以在线程本地Stack上进行对象空间的分配（同时还可以减少Heap上的垃圾收集开销）。</li>
+<li>轻量级锁（Lightweight Locking）：这种锁实现的背后基于这样一种假设，即在真实的情况下我们程序中的大部分同步代码一般都处于无锁竞争状态（即单线程执行环境），在无锁竞争的情况下完全可以避免调用操作系统层面的重量级互斥锁，取而代之的是在monitorenter和monitorexit中只需要依靠一条CAS原子指令就可以完成锁的获取及释放。当存在锁竞争的情况下，执行CAS指令失败的线程将调用操作系统互斥锁进入到阻塞状态，当锁被释放的时候被唤醒（具体处理步骤下面详细讨论）。</li>
+<li>偏向锁（Biased Locking）：是为了在无锁竞争的情况下避免在锁获取过程中执行不必要的CAS原子指令，因为CAS原子指令虽然相对于重量级锁来说开销比较小但还是存在非常可观的本地延迟（可参考这篇文章）。</li>
+<li>适应性自旋（Adaptive Spinning）：当线程在获取轻量级锁的过程中执行CAS操作失败时，在进入与monitor相关联的操作系统重量级锁（mutex semaphore）前会进入忙等待（Spinning）然后再次尝试，当尝试一定的次数后如果仍然没有成功则调用与该monitor关联的semaphore（即互斥锁）进入到阻塞状态。</li>
+</ul>
     </div>
 
         </div>

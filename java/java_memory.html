@@ -33,6 +33,7 @@
 <li><a href="#_4">重排序</a></li>
 </ul>
 </li>
+<li><a href="#happens-before">Happens-before 关系</a></li>
 </ul>
 </div>
 <p><em>本文是《深入理解java虚拟机》的读书笔记</em></p>
@@ -81,6 +82,15 @@
 <p>为了保证内存的可见性，Java编译器在生成指令序列的适当位置会插入内存屏障指令来禁止特定类型的处理器重排序。Java内存模型把内存屏障分为LoadLoad、LoadStore、StoreLoad和StoreStore四种：</p>
 <p><strong>内存屏障</strong>：一个实现是通过 lock 指令强制将前面操作完成的修改从 CPU 的 cache 中写入到内存。</p>
 <p><img alt="内存屏障" src="http://7xjtfr.com1.z0.glb.clouddn.com/091516513623330.png" /></p>
+<h2 id="happens-before">Happens-before 关系</h2>
+<p>happens-before 关系保证：如果线程 A 与线程 B 满足 happens-before 关系，则线程 A 执行动作的结果对于线程 B 是可见的。如果两个操作未按 happens-before 排序，JVM 将可以对他们任意重排序。
+下面介绍几个与理解 ConcurrentHashMap 有关的 happens-before 关系法则：</p>
+<ol>
+<li>程序次序法则：如果在程序中，所有动作 A 出现在动作 B 之前，则线程中的每种动作 A 都 happens-before 于该线程中的每一个动作 B。</li>
+<li>监视器锁法则：对一个监视器的解锁 happens-before 于每个后续对同一监视器的加锁。</li>
+<li>Volatile 变量法则：对 Volatile 域的写入操作 happens-before 于每个后续对同一 Volatile 的读操作。</li>
+<li>传递性：如果 A happens-before 于 B，且 B happens-before C，则 A happens-before C。</li>
+</ol>
     </div>
 
         </div>

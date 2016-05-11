@@ -34,7 +34,14 @@
 <li><a href="#hashmap_1">HashMap的装箱空间效率</a></li>
 </ul>
 </li>
+<li><a href="#concurrenthashmap">ConcurrentHashMap</a><ul>
+<li><a href="#concurrenthashmap-getclear">ConcurrentHashMap 的 get，clear 方法和迭代器是弱一致性的。</a></li>
+</ul>
+</li>
 <li><a href="#linkedhashmap">LinkedHashMap</a></li>
+<li><a href="#arraylist">ArrayList</a></li>
+<li><a href="#linkedlist">LinkedList</a></li>
+<li><a href="#copyonwritearraylist">CopyOnWriteArrayList</a></li>
 </ul>
 </div>
 <h2 id="hashmap">HashMap</h2>
@@ -94,8 +101,45 @@
 <p>8/(24 + 32) = 1/7</p>
 </li>
 </ol>
+<h2 id="concurrenthashmap">ConcurrentHashMap</h2>
+<p>ConcurrentHashMap 是一个并发散列映射表的实现，它允许完全并发的读取，并且支持给定数量的并发更新。相比于 HashTable 和用同步包装器包装的 HashMap（Collections.synchronizedMap(new HashMap())），ConcurrentHashMap 拥有更高的并发性。在 HashTable 和由同步包装器包装的 HashMap 中，使用一个全局的锁来同步不同线程间的并发访问。同一时间点，只能有一个线程持有锁，也就是说在同一时间点，只能有一个线程能访问容器。这虽然保证多线程间的安全并发访问，但同时也导致对容器的访问变成串行化的了。
+在使用锁来协调多线程间并发访问的模式下，减小对锁的竞争可以有效提高并发性。有两种方式可以减小对锁的竞争：</p>
+<ol>
+<li>减小请求同一个锁的频率。</li>
+<li>减少持有锁的时间。</li>
+</ol>
+<p>ConcurrentHashMap 的高并发性主要来自于三个方面：</p>
+<ol>
+<li>用分离锁实现多个线程间的更深层次的共享访问。</li>
+<li>用 HashEntery 对象的不变性来降低执行读操作的线程在遍历链表期间对加锁的需求。</li>
+<li>通过对同一个 Volatile 变量的写 / 读访问，协调不同线程间读 / 写操作的内存可见性。</li>
+</ol>
+<p>使用分离锁，减小了请求同一个锁的频率。</p>
+<p>通过 HashEntery 对象的不变性及对同一个 Volatile 变量的读 / 写来协调内存可见性，使得读操作大多数时候不需要加锁就能成功获取到需要的值(jdk6 中读到的值为空，则加锁重读，因为可能是其他线程在修改哈希表）。由于散列映射表在实际应用中大多数操作都是成功的读操作，所以 2 和 3 既可以减少请求同一个锁的频率，也可以有效减少持有锁的时间。</p>
+<p>通过减小请求同一个锁的频率和尽量减少持有锁的时间 ，使得 ConcurrentHashMap 的并发性相对于 HashTable 和用同步包装器包装的 HashMap 有了质的提高。</p>
+<h3 id="concurrenthashmap-getclear">ConcurrentHashMap 的 get，clear 方法和迭代器是<strong>弱一致性</strong>的。</h3>
+<p>get 方法：没有加锁，如果在 get 的过程中，另一个线程写入或者删除某个元素，get 可能看不到修改后的结果。没有读锁是因为put/remove动作是个原子动作(比如put是一个对数组元素/Entry 指针的赋值操作)，读操作不会看到一个更新动作的中间状态。</p>
+<p>clear 方法：因为没有全局的锁，在清除完一个segments之后，正在清理下一个segments的时候，已经清理segments可能又被加入了数据，因此clear返回的时候，ConcurrentHashMap中是可能存在数据的。因此，clear方法是弱一致的。</p>
+<p>迭代器：在遍历过程中，如果已经遍历的数组上的内容变化了，迭代器不会抛出ConcurrentModificationException异常。如果未遍历的数组上的内容发生了变化，则有可能反映到迭代过程中。这就是ConcurrentHashMap迭代器弱一致的表现。</p>
+<blockquote>
+<p>在 JDK 6,7,8 中 ConcurrentHashMap 的方法实现略有不同，但总体思想是一样的。</p>
+</blockquote>
 <h2 id="linkedhashmap">LinkedHashMap</h2>
 <p>一个 Map 接口的实现，与 HashMap 不同的是，它维护了一个 Entry 的双向链表，因此其迭代的顺序是可预测的，支持按插入顺序或者访问顺序迭代元素。其 Entry 比 HashMap 的 Entry 多了首尾指针。</p>
+<p>扩展HashMap增加双向链表的实现，号称是最占内存的数据结构。支持iterator()时按Entry的插入顺序来排序(但是更新不算， 如果设置accessOrder属性为true，则所有读写访问都算)。</p>
+<p>实现上是在Entry上再增加属性before/after指针，插入时把自己加到Header Entry的前面去。如果所有读写访问都要排序，还要把前后Entry的before/after拼接起来以在链表中删除掉自己。</p>
+<h2 id="arraylist">ArrayList</h2>
+<p>以数组实现。节约空间，但数组有容量限制。超出限制时会增加50%容量，用System.arraycopy()复制到新的数组，因此最好能给出数组大小的预估值。默认第一次插入元素时创建大小为10的数组。</p>
+<p>按数组下标访问元素--get(i)/set(i,e) 的性能很高，这是数组的基本优势。</p>
+<p>直接在数组末尾加入元素--add(e)的性能也高，但如果按下标插入、删除元素--add(i,e), remove(i), remove(e)，则要用System.arraycopy()来移动部分受影响的元素，性能就变差了，这是基本劣势。</p>
+<h2 id="linkedlist">LinkedList</h2>
+<p>以双向链表实现。链表无容量限制，但双向链表本身使用了更多空间，也需要额外的链表指针操作。</p>
+<p>按下标访问元素--get(i)/set(i,e) 要悲剧的遍历链表将指针移动到位(如果i&gt;数组大小的一半，会从末尾移起)。</p>
+<p>插入、删除元素时修改前后节点的指针即可，但还是要遍历部分链表的指针才能移动到下标所指的位置，只有在链表两头的操作--add(), addFirst(),removeLast()或用iterator()上的remove()能省掉指针的移动。</p>
+<h2 id="copyonwritearraylist">CopyOnWriteArrayList</h2>
+<p>并发优化的ArrayList。用CopyOnWrite策略，在修改时先复制一个快照来修改，改完再让内部指针指向新数组。</p>
+<p>因为对快照的修改对读操作来说不可见，所以只有写锁没有读锁，加上复制的昂贵成本，典型的适合读多写少的场景。如果更新频率较高，或数组较大时，还是Collections.synchronizedList(list)，对所有操作用同一把锁来保证线程安全更好。</p>
+<p>增加了addIfAbsent(e)方法，会遍历数组来检查元素是否已存在，性能可想像的不会太好。</p>
     </div>
 
         </div>

@@ -30,6 +30,7 @@
 <li><a href="#git_1">git 操作</a><ul>
 <li><a href="#_1">分支</a></li>
 <li><a href="#_2">远程仓库</a></li>
+<li><a href="#_3">撤销提交</a></li>
 </ul>
 </li>
 </ul>
@@ -38,24 +39,15 @@
 <ol>
 <li>
 <p>设置记住 github 的用户密码，避免重复输入密码</p>
-<div class="hlcode"><pre><span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">global</span> <span class="n">credential</span><span class="p">.</span><span class="n">helper</span> <span class="n">wincred</span>
-</pre></div>
-
-
+<p>git config --global credential.helper wincred</p>
 </li>
 <li>
 <p>设置 push 默认推送给远程同名的分支</p>
-<div class="hlcode"><pre><span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">global</span> <span class="n">push</span><span class="p">.</span><span class="k">default</span> <span class="n">current</span>
-</pre></div>
-
-
+<p>git config --global push.default current</p>
 </li>
 <li>
 <p>Windows 下大小写敏感设置。在windows下面将已经push到远端的文件，改变其文件名的大小写时，git默认会认为文件没有发生任何改动，从而拒绝提交和推送，原因是其默认配置为大小写不敏感，故须在bash下修改配置：</p>
-<div class="hlcode"><pre><span class="n">git</span> <span class="n">config</span> <span class="n">core</span><span class="p">.</span><span class="n">ignorecase</span> <span class="nb">false</span>
-</pre></div>
-
-
+<p>git config core.ignorecase false</p>
 </li>
 </ol>
 <h2 id="git_1">git 操作</h2>
@@ -63,31 +55,19 @@
 <ol>
 <li>
 <p>切换远程分支</p>
-<div class="hlcode"><pre><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">gh</span><span class="o">-</span><span class="n">pages</span> <span class="n">origin</span><span class="o">/</span><span class="n">gh</span><span class="o">-</span><span class="n">pages</span>
-</pre></div>
-
-
+<p>git checkout -b gh-pages origin/gh-pages</p>
 </li>
 <li>
 <p>查看所有分支</p>
-<div class="hlcode"><pre><span class="n">git</span> <span class="n">branch</span> <span class="o">-</span><span class="n">va</span>
-</pre></div>
-
-
+<p>git branch -va</p>
 </li>
 <li>
 <p>新建分支</p>
-<div class="hlcode"><pre><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">issue</span>
-</pre></div>
-
-
+<p>git checkout -b issue</p>
 </li>
 <li>
 <p>推送本地分支到远程仓库</p>
-<div class="hlcode"><pre><span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">issue</span>
-</pre></div>
-
-
+<p>git push origin issue</p>
 </li>
 </ol>
 <h3 id="_2">远程仓库</h3>
@@ -100,6 +80,10 @@
 
 </li>
 </ol>
+<h3 id="_3">撤销提交</h3>
+<div class="hlcode"><pre>    <span class="n">git</span> <span class="n">reset</span> <span class="o">--</span><span class="n">hard</span> <span class="n">HEAD</span><span class="o">~</span><span class="mi">1</span> <span class="c1">//退回到上一次提交</span>
+    <span class="n">git</span> <span class="n">push</span> <span class="o">--</span><span class="n">force</span>  <span class="c1">//将本地更改强制上传到服务器</span>
+</pre></div>
     </div>
 
         </div>
