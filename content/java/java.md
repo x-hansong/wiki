@@ -7,7 +7,7 @@ date: 2016-02-28
 
 ## Java 数据类型
 
-![]{http://7xjtfr.com1.z0.glb.clouddn.com/20131118085507140.png}
+![](http://7xjtfr.com1.z0.glb.clouddn.com/20131118085507140.png)
 
 ## Volatile
 Java语言规范第三版中对volatile的定义如下： java编程语言允许线程访问共享变量，为了确保共享变量能被准确和一致的更新，线程应该确保通过排他锁单独获得这个变量。Java语言提供了volatile，在某些情况下比锁更加方便。如果一个字段被声明成volatile，java线程内存模型确保所有线程看到这个变量的值是一致的。

@@ -51,3 +51,14 @@ date: 2015-01-04
 
         git reset --hard HEAD~1 //退回到上一次提交
         git push --force  //将本地更改强制上传到服务器
+
+### 查看提交信息
+
+    git show  // 查看详细提交信息
+    git log -1  // 查看最近一次提交
+    git log -1 --pretty=%B  //只显示最近提交的注释
+
+## git 问题
+
+### Filename too long in git for windows
+    git config --system core.longpaths true

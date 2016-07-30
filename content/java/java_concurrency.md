@@ -43,24 +43,23 @@ Java对象有包含两个Word的头部。其中，第一个word被称为mark wor
 2. 通常一个锁只被一个线程访问。而且可能是被同一个线程反复的访问，因此反复的CAS会很大程度上影响应用程序的性能
 Biased锁将会尝试声明某个对象属于一个特定的线程，这个线程对对象的lock和unlock操作不需要进行CAS。如果其他线程想lock这个对象，那么它会把这个线程的biased的状态撤销，使其利用普通的锁机制。这样的话，在JDK中lock和unlock的流程就是这样的：
 
-
-    void lock(Object obj, Thread currentTr){
-        if( obj biased to currentTr)
-            return;
-        if( obj biased to other thread)
-            pause owner thread at safe point
-            change mark word and lock record to pretend that obj is locked by other thread with general lock.
-        else{
-             //fall to common lock
+        void lock(Object obj, Thread currentTr){
+            if( obj biased to currentTr)
+                return;
+            if( obj biased to other thread)
+                pause owner thread at safe point
+                change mark word and lock record to pretend that obj is locked by other thread with general lock.
+            else{
+                 //fall to common lock
+            }
         }
-    }
 
-    void unlock(Object obj, Thread currentTr){
-        if( obj biased to currentTr)
-            return .
-        else
-            fall to common lock
-    }
+        void unlock(Object obj, Thread currentTr){
+            if( obj biased to currentTr)
+                return .
+            else
+                fall to common lock
+        }
 
 ## JVM中锁的优化
 简单来说在JVM中monitorenter和monitorexit字节码依赖于底层的操作系统的Mutex Lock来实现的，但是由于使用Mutex Lock需要将当前线程挂起并从用户态切换到内核态来执行，这种切换的代价是非常昂贵的；然而在现实中的大部分情况下，同步方法是运行在单线程环境（无锁竞争环境）如果每次都调用Mutex Lock那么将严重的影响程序的性能。不过在jdk1.6中对锁的实现引入了大量的优化，如锁粗化（Lock Coarsening）、锁消除（Lock Elimination）、轻量级锁（Lightweight Locking）、偏向锁（Biased Locking）、适应性自旋（Adaptive Spinning）等技术来减少锁操作的开销。
