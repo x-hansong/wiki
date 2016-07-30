@@ -71,25 +71,27 @@
 <p>目前，JDK中最新的Biased锁是基于下面的观察：</p>
 <ol>
 <li>轻量级锁处理中必定会用到的CAS(Compare and Set)操作相当慢，需要超过百个以上的cpu cycle</li>
-<li>
-<p>通常一个锁只被一个线程访问。而且可能是被同一个线程反复的访问，因此反复的CAS会很大程度上影响应用程序的性能
-Biased锁将会尝试声明某个对象属于一个特定的线程，这个线程对对象的lock和unlock操作不需要进行CAS。如果其他线程想lock这个对象，那么它会把这个线程的biased的状态撤销，使其利用普通的锁机制。这样的话，在JDK中lock和unlock的流程就是这样的：</p>
-<p>void lock(Object obj, Thread currentTr){
-    if( obj biased to currentTr)
-        return;
-    if( obj biased to other thread)
-        pause owner thread at safe point
-        change mark word and lock record to pretend that obj is locked by other thread with general lock.
-    else{
-         //fall to common lock
-    }
-}</p>
-<p>void unlock(Object obj, Thread currentTr){
-    if( obj biased to currentTr)
-        return .
-    else
-        fall to common lock
-}</p>
+<li>通常一个锁只被一个线程访问。而且可能是被同一个线程反复的访问，因此反复的CAS会很大程度上影响应用程序的性能
+Biased锁将会尝试声明某个对象属于一个特定的线程，这个线程对对象的lock和unlock操作不需要进行CAS。如果其他线程想lock这个对象，那么它会把这个线程的biased的状态撤销，使其利用普通的锁机制。这样的话，在JDK中lock和unlock的流程就是这样的：<div class="hlcode"><pre><span class="kt">void</span> <span class="nf">lock</span><span class="p">(</span><span class="n">Object</span> <span class="n">obj</span><span class="p">,</span> <span class="n">Thread</span> <span class="n">currentTr</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">obj</span> <span class="n">biased</span> <span class="n">to</span> <span class="n">currentTr</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">obj</span> <span class="n">biased</span> <span class="n">to</span> <span class="n">other</span> <span class="kr">thread</span><span class="p">)</span>
+        <span class="n">pause</span> <span class="n">owner</span> <span class="kr">thread</span> <span class="n">at</span> <span class="n">safe</span> <span class="n">point</span>
+        <span class="n">change</span> <span class="n">mark</span> <span class="n">word</span> <span class="n">and</span> <span class="n">lock</span> <span class="n">record</span> <span class="n">to</span> <span class="n">pretend</span> <span class="n">that</span> <span class="n">obj</span> <span class="n">is</span> <span class="n">locked</span> <span class="n">by</span> <span class="n">other</span> <span class="kr">thread</span> <span class="n">with</span> <span class="n">general</span> <span class="n">lock</span><span class="p">.</span>
+    <span class="k">else</span><span class="p">{</span>
+         <span class="c1">//fall to common lock</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">unlock</span><span class="p">(</span><span class="n">Object</span> <span class="n">obj</span><span class="p">,</span> <span class="n">Thread</span> <span class="n">currentTr</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">obj</span> <span class="n">biased</span> <span class="n">to</span> <span class="n">currentTr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">.</span>
+    <span class="k">else</span>
+        <span class="n">fall</span> <span class="n">to</span> <span class="n">common</span> <span class="n">lock</span>
+<span class="p">}</span>
+</pre></div>
+
+
 </li>
 </ol>
 <h2 id="jvm">JVM中锁的优化</h2>

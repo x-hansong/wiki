@@ -107,28 +107,29 @@
 <h3 id="_5">技巧</h3>
 <ol>
 <li>
-<p>判断奇偶
-    只要根据最未位是0还是1来决定，为0就是偶数，为1就是奇数。</p>
+<p>判断奇偶</p>
+<p>只要根据最未位是0还是1来决定，为0就是偶数，为1就是奇数。</p>
 <div class="hlcode"><pre><span class="k">if</span> <span class="p">((</span><span class="n">a</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
 
 </li>
 <li>
-<p>交换两数
-    第一步  a^=b 即a=(a^b);
-    第二步  b^=a 即b=b^(a^b)，由于^运算满足交换律，b^(a^b)=b^b^a。由于一个数和自己异或的结果为0并且任何数与0异或都会不变的，所以此时b被赋上了a的值。
-    第三步 a^=b 就是a=a^b，由于前面二步可知a=(a^b)，b=a，所以a=a^b即a=(a^b)^a。故a会被赋上b的值。</p>
-<div class="hlcode"><pre><span class="n">a</span> <span class="o">^=</span> <span class="n">b</span><span class="p">;</span>
-<span class="n">b</span> <span class="o">^=</span> <span class="n">a</span><span class="p">;</span>
-<span class="n">a</span> <span class="o">^=</span> <span class="n">b</span><span class="p">;</span>
-</pre></div>
-
-
+<p>交换两数</p>
+<ol>
+<li>a^=b 即a=(a^b);</li>
+<li>b^=a 即b=b^(a^b)，由于^运算满足交换律，b^(a^b)=b^b^a。由于一个数和自己异或的结果为0并且任何数与0异或都会不变的，所以此时b被赋上了a的值。</li>
+<li>
+<p>a^=b 就是a=a^b，由于前面二步可知a=(a^b)，b=a，所以a=a^b即a=(a^b)^a。故a会被赋上b的值。</p>
+<p>a ^= b;
+b ^= a;
+a ^= b;</p>
+</li>
+</ol>
 </li>
 <li>
-<p>变换符号
-    取反后加一</p>
+<p>变换符号</p>
+<p>取反后加一</p>
 <div class="hlcode"><pre><span class="o">~</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span>
 </pre></div>
 
@@ -136,6 +137,7 @@
 </li>
 <li>
 <p>绝对值
+k
     对于任何数，与0异或都会保持不变，与-1即0xFFFFFFFF异或就相当于取反。因此，a与i异或后再减i（因为i为0或-1，所以减i即是要么加0要么加1）也可以得到绝对值。</p>
 <div class="hlcode"><pre><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="mi">31</span><span class="p">;</span>
 <span class="k">return</span> <span class="p">((</span><span class="n">a</span> <span class="o">^</span> <span class="n">i</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">);</span>

@@ -31,6 +31,11 @@
 <li><a href="#_1">分支</a></li>
 <li><a href="#_2">远程仓库</a></li>
 <li><a href="#_3">撤销提交</a></li>
+<li><a href="#_4">查看提交信息</a></li>
+</ul>
+</li>
+<li><a href="#git_2">git 问题</a><ul>
+<li><a href="#filename-too-long-in-git-for-windows">Filename too long in git for windows</a></li>
 </ul>
 </li>
 </ul>
@@ -83,6 +88,19 @@
 <h3 id="_3">撤销提交</h3>
 <div class="hlcode"><pre>    <span class="n">git</span> <span class="n">reset</span> <span class="o">--</span><span class="n">hard</span> <span class="n">HEAD</span><span class="o">~</span><span class="mi">1</span> <span class="c1">//退回到上一次提交</span>
     <span class="n">git</span> <span class="n">push</span> <span class="o">--</span><span class="n">force</span>  <span class="c1">//将本地更改强制上传到服务器</span>
+</pre></div>
+
+
+<h3 id="_4">查看提交信息</h3>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">show</span>  <span class="c1">// 查看详细提交信息</span>
+<span class="n">git</span> <span class="n">log</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1">// 查看最近一次提交</span>
+<span class="n">git</span> <span class="n">log</span> <span class="o">-</span><span class="mi">1</span> <span class="o">--</span><span class="n">pretty</span><span class="o">=%</span><span class="n">B</span>  <span class="c1">//只显示最近提交的注释</span>
+</pre></div>
+
+
+<h2 id="git_2">git 问题</h2>
+<h3 id="filename-too-long-in-git-for-windows">Filename too long in git for windows</h3>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">system</span> <span class="n">core</span><span class="p">.</span><span class="n">longpaths</span> <span class="nb">true</span>
 </pre></div>
     </div>
 

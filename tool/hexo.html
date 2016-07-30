@@ -31,6 +31,7 @@
 <li><a href="#_2">解决方法</a></li>
 </ul>
 </li>
+<li><a href="#_3">文章置顶</a></li>
 </ul>
 </div>
 <h2 id="1hackcname">折腾1:hack部署源码,自动添加CNAME文件</h2>
@@ -47,6 +48,46 @@
 
 
 <p>在<code>fs.copyDir</code>上面插入<code>fs.writeFile(deployDir+'/CNAME', 'blog.xiaohansong.com');</code></p>
+<h2 id="_3">文章置顶</h2>
+<blockquote>
+<p>add at 2016-07-30</p>
+</blockquote>
+<p>在需要置顶文章的Front-matter中加上top: true即可，但是默认文章置顶在某一页而不是首页。所以需要修改排序的源码。</p>
+<p>将<code>node_modules/hexo-generator-index/lib/generator.js</code>修改为：</p>
+<div class="hlcode"><pre><span class="s1">&#39;use strict&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">pagination</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;hexo-pagination&#39;</span><span class="p">);</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">locals</span><span class="p">){</span>
+  <span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">posts</span> <span class="o">=</span> <span class="nx">locals</span><span class="p">.</span><span class="nx">posts</span><span class="p">;</span>
+    <span class="nx">posts</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">posts</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">top</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">top</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 两篇文章top都有定义</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">top</span> <span class="o">==</span> <span class="nx">b</span><span class="p">.</span><span class="nx">top</span><span class="p">)</span> <span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">date</span> <span class="o">-</span> <span class="nx">a</span><span class="p">.</span><span class="nx">date</span><span class="p">;</span> <span class="c1">// 若top值一样则按照文章日期降序排</span>
+            <span class="k">else</span> <span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">top</span> <span class="o">-</span> <span class="nx">a</span><span class="p">.</span><span class="nx">top</span><span class="p">;</span> <span class="c1">// 否则按照top值降序排</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">top</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">b</span><span class="p">.</span><span class="nx">top</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 以下是只有一篇文章top有定义，那么将有top的排在前面（这里用异或操作居然不行233）</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">a</span><span class="p">.</span><span class="nx">top</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">top</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">date</span> <span class="o">-</span> <span class="nx">a</span><span class="p">.</span><span class="nx">date</span><span class="p">;</span> <span class="c1">// 都没定义按照文章日期降序排</span>
+    <span class="p">});</span>
+  <span class="kd">var</span> <span class="nx">paginationDir</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">pagination_dir</span> <span class="o">||</span> <span class="s1">&#39;page&#39;</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">pagination</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">posts</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">perPage</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">index_generator</span><span class="p">.</span><span class="nx">per_page</span><span class="p">,</span>
+    <span class="nx">layout</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;archive&#39;</span><span class="cp">]</span><span class="p">,</span>
+    <span class="nx">format</span><span class="o">:</span> <span class="nx">paginationDir</span> <span class="o">+</span> <span class="s1">&#39;/%d/&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">__index</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<blockquote>
+<p>参考<a href="http://www.netcan666.com/2015/11/22/%E8%A7%A3%E5%86%B3Hexo%E7%BD%AE%E9%A1%B6%E9%97%AE%E9%A2%98/">解决Hexo置顶问题</a></p>
+</blockquote>
     </div>
 
         </div>
