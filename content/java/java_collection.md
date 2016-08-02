@@ -6,7 +6,7 @@ date: 2016-04-11
 [TOC]
 
 ## HashMap
-
+基于 JDK 1.8 分析
 ### put函数的实现
 put函数大致的思路为：
 
@@ -18,10 +18,10 @@ put函数大致的思路为：
 6. 如果bucket满了(超过load factor*current capacity)，就要resize。
 
 ### get函数的实现
-bucket里的第一个节点，直接命中；
-如果有冲突，则通过key.equals(k)去查找对应的entry
-若为树，则在树中通过key.equals(k)查找，O(logn)；
-若为链表，则在链表中通过key.equals(k)查找，O(n)。
+1. bucket里的第一个节点，直接命中；
+2. 如果有冲突，则通过key.equals(k)去查找对应的entry
+3. 若为树，则在树中通过key.equals(k)查找，O(logn)；
+4. 若为链表，则在链表中通过key.equals(k)查找，O(n)。
 
 ### hash函数的实现
 在get和put的过程中，计算下标时，先对hashCode进行hash操作，然后再通过hash值进一步计算下标，如下图所示：

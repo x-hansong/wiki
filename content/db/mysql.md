@@ -1,5 +1,5 @@
 ---
-title: MySQL
+title: MySQL 操作与配置
 layout: page
 date: 2015-10-31
 ---
