@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
+        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
+    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
+        <title>MySQL 性能优化 - Wiki | HanSong</title>
+        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <div id="container" class="typo">
+            
+    <div id="header">
+        <div id="post-nav">
+            
+            <a href="/">Home</a> » <a href="/#db">db</a> » MySQL 性能优化
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="title">MySQL 性能优化</div>
+    <div id="content">
+        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">数据库优化的四个方面</a></li>
+<li><a href="#_2">数据库设计</a><ul>
+<li><a href="#3nf">3NF 设计</a></li>
+<li><a href="#_3">合理地使用索引</a></li>
+<li><a href="#_4">分表技术</a><ul>
+<li><a href="#_5">垂直拆分</a></li>
+<li><a href="#_6">水平拆分</a></li>
+</ul>
+</li>
+<li><a href="#_7">读写分离</a></li>
+</ul>
+</li>
+<li><a href="#sql">SQL语句优化</a></li>
+<li><a href="#_8">数据库参数配置</a></li>
+<li><a href="#_9">选择合适的硬件配置</a></li>
+</ul>
+</div>
+<h2 id="_1">数据库优化的四个方面</h2>
+<ul>
+<li>数据库设计</li>
+<li>SQL 语句优化</li>
+<li>数据库参数配置</li>
+<li>硬件升级</li>
+</ul>
+<h2 id="_2">数据库设计</h2>
+<h3 id="3nf">3NF 设计</h3>
+<ul>
+<li>1NF：字段是最小的的单元不可再分</li>
+<li>2NF：满足1NF,表中的字段必须完全依赖于全部主键而非部分主键</li>
+<li>3NF：满足2NF,非主键外的所有字段必须互不依赖</li>
+</ul>
+<h3 id="_3">合理地使用索引</h3>
+<ul>
+<li>普通索引:最基本的索引，它没有任何限制。</li>
+<li>主键索引:一种特殊的唯一索引，不允许有空值。</li>
+<li>唯一索引:索引列的值必须唯一，但允许有空值。</li>
+<li>组合索引:用多个字段建立索引，遵循“最左前缀”原则。</li>
+</ul>
+<p>设置了索引但无法使用的情况：</p>
+<ul>
+<li>以“%”开头的LIKE语句，模糊匹配</li>
+<li>OR语句前后没有同时使用索引</li>
+<li>数据类型出现隐式转化（如varchar不加单引号的话可能会自动转换为int型）</li>
+</ul>
+<h3 id="_4">分表技术</h3>
+<h4 id="_5">垂直拆分</h4>
+<ul>
+<li>将业务紧密，表间关联密切的表划分到单独的数据库中。</li>
+</ul>
+<h4 id="_6">水平拆分</h4>
+<ul>
+<li>根据一定的规则将同一个表中的不同数据拆分到不同的数据库中</li>
+</ul>
+<h3 id="_7">读写分离</h3>
+<p>让主数据库处理事务性查询，而从数据库处理SELECT查询。但是从从库读会有延迟，需要等待主从同步。</p>
+<h2 id="sql">SQL语句优化</h2>
+<ol>
+<li>通过show status命令了解各种SQL的执行频率。</li>
+<li>定位执行效率较低的SQL语句（慢查询日志）</li>
+<li>通过explain分析低效率的SQL</li>
+<li>确定问题并采取相应的优化措施</li>
+</ol>
+<h2 id="_8">数据库参数配置</h2>
+<p>通过配置调整内存和最大连接数</p>
+<h2 id="_9">选择合适的硬件配置</h2>
+<p><em>参考文章</em>
+<a href="http://www.cnblogs.com/jiekzou/p/5371085.html">Mysql性能优化一</a>
+<a href="http://www.cnblogs.com/jiekzou/p/5380073.html">Mysql性能优化二</a>
+<a href="http://www.cnblogs.com/jiekzou/p/5399160.html">Mysql性能优化三</a></p>
+    </div>
+
+        </div>
+        <div id="footer">
+            <span>
+                Copyright © 2012-2016 <a href="http://xiaohansong.com">HanSong Xiao</a>
+                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+            </span>
+        </div>
+    </body>
+</html>

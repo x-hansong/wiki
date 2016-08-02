@@ -45,6 +45,7 @@
 </ul>
 </div>
 <h2 id="hashmap">HashMap</h2>
+<p>基于 JDK 1.8 分析</p>
 <h3 id="put">put函数的实现</h3>
 <p>put函数大致的思路为：</p>
 <ol>
@@ -56,10 +57,12 @@
 <li>如果bucket满了(超过load factor*current capacity)，就要resize。</li>
 </ol>
 <h3 id="get">get函数的实现</h3>
-<p>bucket里的第一个节点，直接命中；
-如果有冲突，则通过key.equals(k)去查找对应的entry
-若为树，则在树中通过key.equals(k)查找，O(logn)；
-若为链表，则在链表中通过key.equals(k)查找，O(n)。</p>
+<ol>
+<li>bucket里的第一个节点，直接命中；</li>
+<li>如果有冲突，则通过key.equals(k)去查找对应的entry</li>
+<li>若为树，则在树中通过key.equals(k)查找，O(logn)；</li>
+<li>若为链表，则在链表中通过key.equals(k)查找，O(n)。</li>
+</ol>
 <h3 id="hash">hash函数的实现</h3>
 <p>在get和put的过程中，计算下标时，先对hashCode进行hash操作，然后再通过hash值进一步计算下标，如下图所示：</p>
 <p><img alt="" src="http://7xjtfr.com1.z0.glb.clouddn.com/293b52fc-d932-11e4-854d-cb47be67949a.png" /></p>
