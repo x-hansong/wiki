@@ -1,31 +1,31 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
-        <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
-        <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
-        <link rel="Stylesheet" type="text/css" href="/static/css/typo.css">
-        <link rel="Stylesheet" type="text/css" href="/static/css/reset_typo.css">
-    	<link rel="icon" href="http://7xjtfr.com1.z0.glb.clouddn.com/favicon.ico">
-        <title>Java NIO - Wiki | HanSong</title>
-        <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
-        <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>Java NIO - Wiki | HanSong</title>
+    <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+    <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
 
-    <body>
-        <div id="container" class="typo">
-            
-    <div id="header">
-        <div id="post-nav">
-            
-            <a href="/">Home</a> » <a href="/#java">java</a> » Java NIO
-            
-        </div>
-    </div>
-    <div class="clearfix"></div>
-    <div id="title">Java NIO</div>
-    <div id="content">
-        <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#java">java</a>&nbsp;&#187;&nbsp;Java NIO
+    <span class="updated">Updated&nbsp;
+      2015-09-23
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">Java NIO</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
 <li><a href="#java-nio-io">Java NIO 和 IO 的主要区别</a><ul>
 <li><a href="#io">阻塞 IO 模型</a></li>
 <li><a href="#io_1">非阻塞 I/O 模型</a></li>
@@ -71,13 +71,12 @@ NIO 服务器可以使用一个线程处理多个连接。（实际上不会这�
 <p>NIO 的创建目的是为了让 Java 程序员可以实现高速 I/O 而无需编写自定义的本机代码。NIO 将最耗时的 I/O 操作(即填充和提取缓冲区)转移回操作系统，因而可以极大地提高速度。</p>
 <p>NIO 的选择器采用了多路复用（Multiplexing）技术，可在一个选择器上处理多个套接字， 通过获取读写通道来进行 IO 操作。通过选择器，我们可以监听套接字的读写事件，一个线程可以同时处理多个连接。I/O多路复用的最大优势是系统开销小，系统不需要创建新的额外进程或者线程，也不需要维护这些进程和线程的运行，降低了系统的维护工作量，节省了系统资源。</p>
     </div>
-
-        </div>
-        <div id="footer">
-            <span>
-                Copyright © 2012-2016 <a href="http://xiaohansong.com">HanSong Xiao</a>
-                Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
-            </span>
-        </div>
-    </body>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2016 HanSong Xiao.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2016-08-10 00:19:27</p>
+      </span>
+    </div>
+  </body>
 </html>
