@@ -33,6 +33,7 @@ date: 2016-02-23
 - Conventionally, an empty tree (tree with no nodes, if such are allowed) has depth and height −1.
 
 上面的定义来自《Data Structures and Algorithm Analysis》，下面的定义来自国内教材。
+
 树的深度是从根节点开始（其深度为1）自顶向下逐层累加的，而高度是从叶节点开始（其高度为1）自底向上逐层累加的。虽然树的深度和高度一样，但是具体到树的某个节点，其深度和高度是不一样的。
 
 也就是说根节点的深度，叶子节点的高度有两种不同的初始值，有些定义为0，有些定义为1。
