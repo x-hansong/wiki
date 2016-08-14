@@ -6,7 +6,7 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
-    <title>协议 - Wiki | HanSong</title>
+    <title>网络协议总览 - Wiki | HanSong</title>
     <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
     <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -16,14 +16,14 @@
     <div id="container">
       
 <div id="header">
-  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#network">network</a>&nbsp;&#187;&nbsp;协议
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#network">network</a>&nbsp;&#187;&nbsp;网络协议总览
     <span class="updated">Updated&nbsp;
       2016-04-09
     </span></div>
 </div>
 <div class="clearfix"></div>
 
-<div class="page_title">协议</div>
+<div class="page_title">网络协议总览</div>
 
   <div class="toc"><span class="toctitle">Table of Contents</span><ul>
 <li><a href="#_1">应用层</a><ul>
@@ -43,25 +43,18 @@
 </ul>
 </li>
 <li><a href="#_5">运输层</a><ul>
-<li><a href="#tcp">TCP 传输控制协议</a><ul>
-<li><a href="#_6">头部格式</a></li>
-<li><a href="#_7">三次握手</a></li>
-<li><a href="#_8">四次分手</a></li>
-<li><a href="#time_wait">TIME_WAIT状态存在的理由</a></li>
-<li><a href="#_9">拥塞控制</a></li>
-</ul>
-</li>
+<li><a href="#tcp">TCP 传输控制协议</a></li>
 <li><a href="#udp">UDP 用户数据报协议</a></li>
 </ul>
 </li>
-<li><a href="#_10">网络层</a><ul>
+<li><a href="#_6">网络层</a><ul>
 <li><a href="#ip">IP 协议</a></li>
-<li><a href="#arp">ARP 协议</a></li>
-<li><a href="#_11">选路协议</a></li>
-<li><a href="#_12">控制报文协议</a></li>
+<li><a href="#arp">ARP 地址解析协议</a></li>
+<li><a href="#_7">选路协议</a></li>
+<li><a href="#icmp">ICMP 控制报文协议</a></li>
 </ul>
 </li>
-<li><a href="#_13">链路层</a></li>
+<li><a href="#_8">链路层</a></li>
 </ul>
 </div>
 <h2 id="_1">应用层</h2>
@@ -129,78 +122,40 @@
 <li>如果用的是转发模式，此DNS服务器就会把请求转发至上一级DNS服务器，由上一级服务器进行解析，上一级服务器如果不能解析，或找根DNS或把转请求转至上上级，以此循环。不管是本地DNS服务器用是是转发，还是根提示，最后都是把结果返回给本地DNS服务器，由此DNS服务器再返回给客户机。</li>
 </ol>
 <h2 id="_5">运输层</h2>
-<p>多路分解：将运输层报文段中的数据交付到正确的套接字的工作。
-多路复用：从源主机的不同套接字中收集数据块，并为数据块封装上首部信息，从而生成报文段，将报文段传递到网络层的工作。</p>
+<ul>
+<li>多路分解：将运输层报文段中的数据交付到正确的套接字的工作。</li>
+<li>多路复用：从源主机的不同套接字中收集数据块，并为数据块封装上首部信息，从而生成报文段，将报文段传递到网络层的工作。</li>
+</ul>
 <h3 id="tcp">TCP 传输控制协议</h3>
-<h4 id="_6">头部格式</h4>
-<p><img alt="TCP" src="http://7xjtfr.com1.z0.glb.clouddn.com/jellythinkTCP3.jpg" /></p>
-<ul>
-<li>Source Port和Destination Port:分别占用16位，表示源端口号和目的端口号；用于区别主机中的不同进程，而IP地址是用来区分不同的主机的，源端口号和目的端口号配合上IP首部中的源IP地址和目的IP地址就能唯一的确定一个TCP连接；
-Sequence Number:用来标识从TCP发端向TCP收端发送的数据字节流，它表示在这个报文段中的的第一个数据字节在数据流中的序号；主要用来解决网络报乱序的问题；</li>
-<li>Acknowledgment Number:32位确认序列号包含发送确认的一端所期望收到的下一个序号，因此，确认序号应当是上次已成功收到数据字节序号加1。不过，只有当标志位中的ACK标志（下面介绍）为1时该确认序列号的字段才有效。主要用来解决不丢包的问题；
-Offset:给出首部中32 bit字的数目，需要这个值是因为任选字段的长度是可变的。这个字段占4bit（最多能表示15个32bit的的字，即4*15=60个字节的首部长度），因此TCP最多有60字节的首部。然而，没有任选字段，正常的长度是20字节；</li>
-<li>
-<p>TCP Flags:TCP首部中有6个标志比特，它们中的多个可同时被设置为1，主要是用于操控TCP的状态机的，依次为URG，ACK，PSH，RST，SYN，FIN。每个标志位的意思如下：</p>
-<ul>
-<li>URG：此标志表示TCP包的紧急指针域（后面马上就要说到）有效，用来保证TCP连接不被中断，并且督促中间层设备要尽快处理这些数据；</li>
-<li>ACK：此标志表示应答域有效，就是说前面所说的TCP应答号将会包含在TCP数据包中；有两个取值：0和1，为1的时候表示应答域有效，反之为0；</li>
-<li>PSH：这个标志位表示Push操作。所谓Push操作就是指在数据包到达接收端以后，立即传送给应用程序，而不是在缓冲区中排队；</li>
-<li>RST：这个标志表示连接复位请求。用来复位那些产生错误的连接，也被用来拒绝错误和非法的数据包；</li>
-<li>SYN：表示同步序号，用来建立连接。SYN标志位和ACK标志位搭配使用，当连接请求的时候，SYN=1，ACK=0；连接被响应的时候，SYN=1，ACK=1；这个标志的数据包经常被用来进行端口扫描。扫描者发送一个只有SYN的数据包，如果对方主机响应了一个数据包回来 ，就表明这台主机存在这个端口；但是由于这种扫描方式只是进行TCP三次握手的第一次握手，因此这种扫描的成功表示被扫描的机器不很安全，一台安全的主机将会强制要求一个连接严格的进行TCP的三次握手；</li>
-<li>FIN： 表示发送端已经达到数据末尾，也就是说双方的数据传送完成，没有数据可以传送了，发送FIN标志位的TCP数据包后，连接将被断开。这个标志的数据包也经常被用于进行端口扫描。</li>
-</ul>
-</li>
-<li>
-<p>Window:窗口大小，也就是有名的滑动窗口，用来进行流量控制</p>
-</li>
-</ul>
-<h4 id="_7">三次握手</h4>
-<p><img alt="3-handshake" src="http://7xjtfr.com1.z0.glb.clouddn.com/jellythinkTCP4.jpg" /></p>
-<ol>
-<li>第一次握手：建立连接。客户端发送连接请求报文段，将SYN位置为1，Sequence Number为x；然后，客户端进入SYN_SEND状态，等待服务器的确认；</li>
-<li>第二次握手：服务器收到SYN报文段。服务器收到客户端的SYN报文段，需要对这个SYN报文段进行确认，设置Acknowledgment Number为x+1(Sequence Number+1)；同时，自己自己还要发送SYN请求信息，将SYN位置为1，Sequence Number为y；服务器端将上述所有信息放到一个报文段（即SYN+ACK报文段）中，一并发送给客户端，此时服务器进入SYN_RECV状态；</li>
-<li>第三次握手：客户端收到服务器的SYN+ACK报文段。然后将Acknowledgment Number设置为y+1，向服务器发送ACK报文段，这个报文段发送完毕以后，客户端和服务器端都进入ESTABLISHED状态，完成TCP三次握手。</li>
-</ol>
-<h4 id="_8">四次分手</h4>
-<ol>
-<li>第一次分手：主机1（可以使客户端，也可以是服务器端），设置Sequence Number和Acknowledgment Number，向主机2发送一个FIN报文段；此时，主机1进入FIN_WAIT_1状态；这表示主机1没有数据要发送给主机2了；</li>
-<li>第二次分手：主机2收到了主机1发送的FIN报文段，向主机1回一个ACK报文段，Acknowledgment Number为Sequence Number加1；主机1进入FIN_WAIT_2状态；主机2告诉主机1，我“同意”你的关闭请求；</li>
-<li>第三次分手：主机2向主机1发送FIN报文段，请求关闭连接，同时主机2进入CLOSE_WAIT状态；</li>
-<li>第四次分手：主机1收到主机2发送的FIN报文段，向主机2发送ACK报文段，然后主机1进入TIME_WAIT状态；主机2收到主机1的ACK报文段以后，就关闭连接；此时，主机1等待2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，主机1也可以关闭连接了。</li>
-</ol>
-<h4 id="time_wait">TIME_WAIT状态存在的理由</h4>
-<p>TCP/IP协议就是这样设计的，是不可避免的。主要有两个原因:</p>
-<ol>
-<li>可靠地实现TCP全双工连接的终止
-TCP协议在关闭连接的四次握手过程中，最终的ACK是由主动关闭连接的一端（后面统称A端）发出的，如果这个ACK丢失，对方（后面统称B端）将重发出最终的FIN，因此A端必须维护状态信息（TIME_WAIT）允许它重发最终的ACK。如果A端不维持TIME_WAIT状态，而是处于CLOSED 状态，那么A端将响应RST分节，B端收到后将此分节解释成一个错误（在java中会抛出connection reset的SocketException)。
-因而，要实现TCP全双工连接的正常终止，必须处理终止过程中四个分节任何一个分节的丢失情况，主动关闭连接的A端必须维持TIME_WAIT状态 。</li>
-<li>允许老的重复分节在网络中消逝
-TCP分节可能由于路由器异常而“迷途”，在迷途期间，TCP发送端可能因确认超时而重发这个分节，迷途的分节在路由器修复后也会被送到最终目的地，这个迟到的迷途分节到达时可能会引起问题。在关闭“前一个连接”之后，马上又重新建立起一个相同的IP和端口之间的“新连接”，“前一个连接”的迷途重复分组在“前一个连接”终止后到达，而被“新连接”收到了。为了避免这个情况，TCP协议不允许处于TIME_WAIT状态的连接启动一个新的可用连接，因为TIME_WAIT状态持续2MSL，就可以保证当成功建立一个新TCP连接的时候，来自旧连接重复分组已经在网络中消逝。</li>
-</ol>
-<p><strong>MSL时间</strong></p>
-<p>MSL就是maximum segment lifetime(最大分节生命期），这是一个IP数据包能在互联网上生存的最长时间，超过这个时间IP数据包将在网络中消失 。MSL在RFC 1122上建议是2分钟，而源自berkeley的TCP实现传统上使用30秒。</p>
-<h4 id="_9">拥塞控制</h4>
-<p>TCP 拥塞控制算法：</p>
-<ol>
-<li>加性增，乘性减：发生丢包事件时，让发送方降低发送速率（减小拥塞窗口的值，除以2）；没有检测到拥塞时，就缓慢增加。</li>
-<li>慢启动</li>
-<li>对超时事件作出反应</li>
-</ol>
 <h3 id="udp">UDP 用户数据报协议</h3>
 <p>给网络层协议增加了一点多路复用、多路分解。</p>
 <p>8字节的头部开销：源端口号，目的端口号，长度，检验和。（都是16bit大小）</p>
-<h2 id="_10">网络层</h2>
+<h2 id="_6">网络层</h2>
 <h3 id="ip">IP 协议</h3>
-<h3 id="arp">ARP 协议</h3>
-<h3 id="_11">选路协议</h3>
-<h3 id="_12">控制报文协议</h3>
-<h2 id="_13">链路层</h2>
+<ul>
+<li>IP是网络层的地址信息</li>
+<li>MSL就是maximum segment lifetime(最大分节生命期），这是一个IP数据包能在互联网上生存的最长时间，超过这个时间IP数据包将在网络中消失 。MSL在RFC 1122上建议是2分钟，而源自berkeley的TCP实现传统上使用30秒。</li>
+<li>
+<p>MTU:数据链路的最大传输单元</p>
+<p>为了避免IP数据报在中途被分片（效率低），采用<strong>路径MTU发现</strong>：使用链路中最小的MTU来发送IP数据报，TCP中的MSS就跟最小MTU有关。</p>
+</li>
+<li>
+<p>IP 首部中的长度字段为 16 位，IP 包的最大长度为 65535  字节</p>
+</li>
+<li>TTL：IP 包的生存时间，指能中转多少个路由器，每经过一个路由器，TTL 就会减 1，直到 0 就被丢弃。</li>
+</ul>
+<h3 id="arp">ARP 地址解析协议</h3>
+<p>以目标IP为线索，用来定位下一个应该接受数据分包的网络设备MAC地址。</p>
+<h3 id="_7">选路协议</h3>
+<h3 id="icmp">ICMP 控制报文协议</h3>
+<h2 id="_8">链路层</h2>
+<p>MAC是数据链路层的地址信息</p>
     </div>
     <div id="footer">
       <span>
         <p>Copyright © 2016 HanSong Xiao.
-        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
-        <p>Site Generated 2016-08-10 00:19:27</p>
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script></p>
+        <p>Site Generated 2016-08-14 22:28:15</p>
       </span>
     </div>
   </body>
