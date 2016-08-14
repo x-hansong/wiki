@@ -1,5 +1,5 @@
 ---
-title: Java 实践
+title: Java 基础
 layout: page
 date: 2016-02-28
 ---

@@ -74,7 +74,57 @@ hash函数的实现：高16bit不变，低16bit和高16bit做了一个异或。
 
     8/(24 + 32) = 1/7
 
+## Hashtable 与 HashMap 的区别
+1. 继承的父类不同。
+
+    Hashtable 继承自Dictionary类，而HashMap继承自AbstractMap类。但二者都实现了Map接口。
+
+2. 线程安全性不同。
+
+    Hashtable 中的方法是Synchronize的，而HashMap中的方法在缺省情况下是非Synchronize的。在多线程并发的环境下，可以直接使用Hashtable，不需要自己为它的方法实现同步，但使用HashMap时就必须要自己增加同步处理。
+
+3. key和value是否允许null值。
+
+    - 其中key和value都是对象，并且不能包含重复key，但可以包含重复的value。
+    - Hashtable中，key和value都不允许出现null值。
+    - HashMap中，null可以作为键，这样的键只有一个；可以有一个或多个键所对应 的值为null。当get()方法返回null值时，可能是 HashMap中没有该键，也可能使该键所对应的值为null。因此，在HashMap中不能由get()方法来判断HashMap中是否存在某个键， 而应该用containsKey()方法来判断。
+    - HashMap 通过`putForNullKey(value)`，将 null 键存在`table[0]`的位置。
+
+4. hash值不同
+
+    哈希值的使用不同，HashTable直接使用对象的hashCode。而HashMap重新计算hash值。
+
+5. 内部实现使用的数组初始化和扩容方式不同。
+
+    - HashTable中hash数组默认大小是11，增加的方式是 old*2+1。
+    - HashMap中hash数组的默认大小是16，而且一定是2的指数。
+
+## HashSet
+1. HashSet底层是采用HashMap实现的
+2. 调用HashSet的add方法时，实际上是向HashMap中增加了一行(key-value对)，该行的key就是向HashSet增加的那个对象，该行的value就是一个Object类型的常量。
+
 ## ConcurrentHashMap
+*基于 jdk6 分析*
+
+ConcurrentHashMap 类中包含两个静态内部类 HashEntry 和 Segment。HashEntry 用来封装映射表的键 / 值对；Segment 用来充当锁的角色，每个 Segment 对象守护整个散列映射表的若干个桶。每个桶是由若干个 HashEntry 对象链接起来的链表。一个 ConcurrentHashMap 实例中包含由若干个 Segment 对象组成的数组。
+
+### HashEntry
+HashEntry 用来封装散列映射表中的键值对。在 HashEntry 类中，key，hash 和 next 域都被声明为 final 型，value 域被声明为 volatile 型。
+
+在 ConcurrentHashMap 中，在散列时如果产生“碰撞”，将采用“分离链接法”来处理“碰撞”：把“碰撞”的 HashEntry 对象链接成一个链表。由于 HashEntry 的 next 域为 final 型，所以新节点只能在链表的表头处插入。
+
+### Segment
+Segment 类继承于 ReentrantLock 类，从而使得 Segment 对象能充当锁的角色。每个 Segment 对象用来守护其（成员对象 table 中）包含的若干个桶。
+
+table 是一个由 HashEntry 对象组成的数组。table 数组的每一个数组成员就是散列映射表的一个桶。
+
+count 变量是一个计数器，它表示每个 Segment 对象管理的 table 数组（若干个 HashEntry 组成的链表）包含的 HashEntry 对象的个数。每一个 Segment 对象都有一个 count 对象来表示本 Segment 中包含的 HashEntry 对象的总数。注意，之所以在每个 Segment 对象中包含一个计数器，而不是在 ConcurrentHashMap 中使用全局的计数器，是为了避免出现“热点域”而影响 ConcurrentHashMap 的并发性。
+
+### 总结
+ConcurrentHashMap 在默认并发级别会创建包含 16 个 Segment 对象的数组。每个 Segment 的成员对象 table 包含若干个散列表的桶。每个桶是由 HashEntry 链接起来的一个链表。如果键能均匀散列，每个 Segment 大约守护整个散列表中桶总数的 1/16。
+
+![ConcurrentHashMap](http://7xjtfr.com1.z0.glb.clouddn.com/ConcurrentHashMap.jpg)
+
 ConcurrentHashMap 是一个并发散列映射表的实现，它允许完全并发的读取，并且支持给定数量的并发更新。相比于 HashTable 和用同步包装器包装的 HashMap（Collections.synchronizedMap(new HashMap())），ConcurrentHashMap 拥有更高的并发性。在 HashTable 和由同步包装器包装的 HashMap 中，使用一个全局的锁来同步不同线程间的并发访问。同一时间点，只能有一个线程持有锁，也就是说在同一时间点，只能有一个线程能访问容器。这虽然保证多线程间的安全并发访问，但同时也导致对容器的访问变成串行化的了。
 在使用锁来协调多线程间并发访问的模式下，减小对锁的竞争可以有效提高并发性。有两种方式可以减小对锁的竞争：
 
@@ -95,11 +145,9 @@ ConcurrentHashMap 的高并发性主要来自于三个方面：
 
 ### ConcurrentHashMap 的 get，clear 方法和迭代器是**弱一致性**的。
 
-get 方法：没有加锁，如果在 get 的过程中，另一个线程写入或者删除某个元素，get 可能看不到修改后的结果。没有读锁是因为put/remove动作是个原子动作(比如put是一个对数组元素/Entry 指针的赋值操作)，读操作不会看到一个更新动作的中间状态。
-
-clear 方法：因为没有全局的锁，在清除完一个segments之后，正在清理下一个segments的时候，已经清理segments可能又被加入了数据，因此clear返回的时候，ConcurrentHashMap中是可能存在数据的。因此，clear方法是弱一致的。
-
-迭代器：在遍历过程中，如果已经遍历的数组上的内容变化了，迭代器不会抛出ConcurrentModificationException异常。如果未遍历的数组上的内容发生了变化，则有可能反映到迭代过程中。这就是ConcurrentHashMap迭代器弱一致的表现。
+- get 方法：没有加锁，如果在 get 的过程中，另一个线程写入或者删除某个元素，get 可能看不到修改后的结果。没有读锁是因为put/remove动作是个原子动作(比如put是一个对数组元素/Entry 指针的赋值操作)，读操作不会看到一个更新动作的中间状态。
+- clear 方法：因为没有全局的锁，在清除完一个segments之后，正在清理下一个segments的时候，已经清理segments可能又被加入了数据，因此clear返回的时候，ConcurrentHashMap中是可能存在数据的。因此，clear方法是弱一致的。
+- 迭代器：在遍历过程中，如果已经遍历的数组上的内容变化了，迭代器不会抛出ConcurrentModificationException异常。如果未遍历的数组上的内容发生了变化，则有可能反映到迭代过程中。这就是ConcurrentHashMap迭代器弱一致的表现。
 
 > 在 JDK 6,7,8 中 ConcurrentHashMap 的方法实现略有不同，但总体思想是一样的。
 

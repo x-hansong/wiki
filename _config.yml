@@ -7,6 +7,3 @@ keywords: wiki, markdown, linux, c, java, python, qemu
 description: "HanSong's personal wiki, recording my little thoughts"
 author: HanSong Xiao
 theme: simple2
-
-deploy:
-  - type: git
