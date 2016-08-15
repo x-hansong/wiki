@@ -85,3 +85,4 @@ InnoDB 行锁是通过给索引上的索引项加锁来实现的，这一点 MyS
     1. 非唯一索引会产生Next-key Lock，即Record Lock + Gap Lock。可防止幻读；
     2. 如果操作（update、delete）的列没有索引，所有纪录加上Next-key Lock，即所有的行记录都被锁住，相当于全表锁，此时相关此表的任何操作都将被阻塞；
     3. 修改事务隔离级别为RC或启用innodb_locks_unsafe_for_binlog参数，InnoDB会触发semi-consistent read，降低锁范围，变成只锁定有影响的记录行。（风险：违反二阶段锁（2PL）原则，导致幻读，不可重复读）
+
