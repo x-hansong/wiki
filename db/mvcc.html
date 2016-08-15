@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>MVCC 多版本并发控制 - Wiki | HanSong</title>
+    <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+    <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#db">db</a>&nbsp;&#187;&nbsp;MVCC 多版本并发控制
+    <span class="updated">Updated&nbsp;
+      2016-08-15
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">MVCC 多版本并发控制</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul></ul>
+</div>
+<p>MySQL InnoDB存储引擎，实现的是基于多版本的并发控制协议——MVCC (Multi-Version Concurrency Control) (注：与MVCC相对的，是基于锁的并发控制，Lock-Based Concurrency Control)。MVCC最大的好处，相信也是耳熟能详：读不加锁，读写不冲突。在读多写少的OLTP应用中，读写不冲突是非常重要的，极大的增加了系统的并发性能，这也是为什么现阶段，几乎所有的RDBMS，都支持了MVCC。</p>
+<p>在MVCC并发控制中，读操作可以分成两类：快照读 (snapshot read)与当前读 (current read)。</p>
+<ul>
+<li>快照读，读取的是记录的可见版本 (有可能是历史版本)，不用加锁。</li>
+<li>当前读，读取的是记录的最新版本，并且，当前读返回的记录，都会加上锁，保证其他事务不会再并发修改这条记录。</li>
+</ul>
+<p>在一个支持MVCC并发控制的系统中，哪些读操作是快照读？哪些操作又是当前读呢？以MySQL InnoDB为例：</p>
+<ul>
+<li>
+<p>快照读：简单的select操作，属于快照读，不加锁。(当然，也有例外，下面会分析)</p>
+<div class="hlcode"><pre><span class="n">select</span> <span class="o">*</span> <span class="n">from</span> <span class="n">table</span> <span class="n">where</span> <span class="o">?</span><span class="p">;</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>当前读：特殊的读操作，插入/更新/删除操作，属于当前读，需要加锁。</p>
+<div class="hlcode"><pre><span class="n">select</span> <span class="o">*</span> <span class="n">from</span> <span class="n">table</span> <span class="n">where</span> <span class="o">?</span> <span class="n">lock</span> <span class="n">in</span> <span class="n">share</span> <span class="n">mode</span><span class="p">;</span>
+<span class="n">select</span> <span class="o">*</span> <span class="n">from</span> <span class="n">table</span> <span class="n">where</span> <span class="o">?</span> <span class="k">for</span> <span class="n">update</span><span class="p">;</span>
+<span class="n">insert</span> <span class="n">into</span> <span class="n">table</span> <span class="nf">values</span> <span class="p">(</span><span class="err">…</span><span class="p">);</span>
+<span class="n">update</span> <span class="n">table</span> <span class="n">set</span> <span class="o">?</span> <span class="n">where</span> <span class="o">?</span><span class="p">;</span>
+<span class="n">delete</span> <span class="n">from</span> <span class="n">table</span> <span class="n">where</span> <span class="o">?</span><span class="p">;</span>
+</pre></div>
+
+
+<p>所有以上的语句，都属于当前读，读取记录的最新版本。并且，读取之后，还需要保证其他并发事务不能修改当前记录，对读取记录加锁。其中，除了第一条语句，对读取记录加S锁 (共享锁)外，其他的操作，都加的是X锁 (排它锁)。</p>
+</li>
+</ul>
+<p>InnoDB 的 MVCC 是通过在每行记录后面保存两个隐藏列来实现的。这两个列，一个是创建时间列, 保存行的 insert 时间或者 update 时间，一个是删除时间列, 保存行的 delete 时间。当然这个时间并不是实际的时间值，而是系统版本号(system version number, svn)。每开始一个新的事务，系统版本号都对自动递增。事务开始时刻的系统版本号会作为当前事务的版本号，用来和查询到的每行记录的版本号进行比较。</p>
+<p>下面看一下在 REPEATABLE READ 隔离级别下，MVCC 具体是如何操作的。</p>
+<ul>
+<li>
+<p>SELECT</p>
+<p>InnoDB 会根据以下两个条件检查每行记录：</p>
+<ul>
+<li>InnoDB 只查找行的创建系统版本号小于或等于当前事务版本号的数据行, 这样可以确保事务读取的行, 要么是在事务开始前就已经存在的, 要么是当前事务自身插入或修改过的</li>
+<li>行的删除版本号要么未定义, 要么大于当前事务版本号。这可以确保事务读取到的行, 要么是在事务开始之前未被删除，要么是当前事务自身删除的</li>
+</ul>
+<p>只有同时符合上述两个条件的记录，才能返回作为查询结果</p>
+</li>
+<li>
+<p>INSERT</p>
+<p>InnoDB 保存当前事务的版本号到新插入行的创建时间列</p>
+</li>
+<li>
+<p>DELETE</p>
+<p>InnoDB 保存当前事务的版本号到删除行的删除时间列</p>
+</li>
+<li>
+<p>UPDATE</p>
+<p>InnoDB 插入一条新记录, 保存当前事务版本号到创建时间列，同时保存当前事务版本号到旧行的删除时间列</p>
+</li>
+</ul>
+<p>保存这个额外的系统版本号，使大多数读操作都可以不用加锁, non-blocking reads 就是这么实现的。这样设计使得读操作很简单，性能很好，并且保证只会读取到符合条件的行。不足之处是每行记录都要额外的存储空间，需要做更多的行检查工作，以及一些额外的维护工作</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2016 HanSong Xiao.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script></p>
+        <p>Site Generated 2016-08-15 22:31:48</p>
+      </span>
+    </div>
+  </body>
+</html>
