@@ -27,6 +27,10 @@
 
   <div class="toc"><span class="toctitle">Table of Contents</span><ul>
 <li><a href="#_1">线程的状态</a></li>
+<li><a href="#thread">Thread</a><ul>
+<li><a href="#jointimeout">join(timeout) 方法</a></li>
+</ul>
+</li>
 <li><a href="#java">Java 对象头与锁</a></li>
 <li><a href="#jvm">JVM中锁的优化</a></li>
 <li><a href="#unsafe-cas">Unsafe 与 CAS</a><ul>
@@ -54,6 +58,10 @@
 <p>死亡状态（Dead）：线程执行完了或者因异常退出了run()方法，该线程结束生命周期。</p>
 </li>
 </ol>
+<h2 id="thread">Thread</h2>
+<h3 id="jointimeout">join(timeout) 方法</h3>
+<p>Waits at most millis milliseconds for this thread to die. A timeout of 0 means to wait forever.
+This implementation uses a loop of this.wait calls conditioned on this.isAlive. As a thread terminates the this.notifyAll method is invoked. It is recommended that applications not use wait, notify, or notifyAll on Thread instances</p>
 <h2 id="java">Java 对象头与锁</h2>
 <p>Java对象有包含两个Word的头部。其中，第一个word被称为mark word，用来包含和垃圾收集、hash码的一些信息。第二个word用来指向对象的类。</p>
 <p><img alt="" src="http://7xjtfr.com1.z0.glb.clouddn.com/051358589904735.jpg" /></p>
@@ -162,7 +170,7 @@ Biased锁将会尝试声明某个对象属于一个特定的线程，这个线�
       <span>
         <p>Copyright © 2016 HanSong Xiao.
         Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script></p>
-        <p>Site Generated 2016-08-15 23:06:09</p>
+        <p>Site Generated 2016-08-18 23:39:51</p>
       </span>
     </div>
   </body>
