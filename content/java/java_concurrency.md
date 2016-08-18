@@ -17,6 +17,12 @@ date: 2015-03-22
 
 5. 死亡状态（Dead）：线程执行完了或者因异常退出了run()方法，该线程结束生命周期。
 
+## Thread
+
+### join(timeout) 方法
+Waits at most millis milliseconds for this thread to die. A timeout of 0 means to wait forever.
+This implementation uses a loop of this.wait calls conditioned on this.isAlive. As a thread terminates the this.notifyAll method is invoked. It is recommended that applications not use wait, notify, or notifyAll on Thread instances
+
 ## Java 对象头与锁
 
 Java对象有包含两个Word的头部。其中，第一个word被称为mark word，用来包含和垃圾收集、hash码的一些信息。第二个word用来指向对象的类。

@@ -178,3 +178,11 @@ ConcurrentHashMap 的高并发性主要来自于三个方面：
 因为对快照的修改对读操作来说不可见，所以只有写锁没有读锁，加上复制的昂贵成本，典型的适合读多写少的场景。如果更新频率较高，或数组较大时，还是Collections.synchronizedList(list)，对所有操作用同一把锁来保证线程安全更好。
 
 增加了addIfAbsent(e)方法，会遍历数组来检查元素是否已存在，性能可想像的不会太好。
+
+## 迭代器
+
+集合类一般有modCount，表示集合类中的元素被修改了几次(在移除，新加元素时此值都会自增)，而expectedModCount是表示期望的修改次数，在迭代器构造的时候这两个值是相等，如果在遍历过程中这两个值出现了不同步就会抛出ConcurrentModificationException异常。
+
+设置modCount和expectedModCount的目的是为了检测iterator的有效性，检测是否有其它操作对HashMap的结构进行了修改，由于这些操作不是通过当前iterator进行的，因此有可能破坏iterator的有效性。通过iterator执行remove只能删除当前iterator所在的元素，不会让iterator失效。而通过HashMap.remove()实际上可以删除任意元素，这个元素有可能正是iterator内部的next变量已经引用了的元素，造成iterator失效。
+
+HashMap和keySet的remove方法都可以通过传递key参数删除任意的元素，而iterator只能删除当前元素(current)，一旦删除的元素是iterator对象中next所正在引用的，如果没有通过modCount、 expectedModCount的比较实现快速失败抛出异常，下次循环该元素将成为current指向，此时iterator就遍历了一个已移除的过期数据。

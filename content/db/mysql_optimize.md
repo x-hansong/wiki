@@ -49,6 +49,6 @@ date: 2016-07-30
 ## 选择合适的硬件配置
 
 _参考文章_
-[Mysql性能优化一](http://www.cnblogs.com/jiekzou/p/5371085.html)
-[Mysql性能优化二](http://www.cnblogs.com/jiekzou/p/5380073.html)
-[Mysql性能优化三](http://www.cnblogs.com/jiekzou/p/5399160.html)
+- [Mysql性能优化一](http://www.cnblogs.com/jiekzou/p/5371085.html)
+- [Mysql性能优化二](http://www.cnblogs.com/jiekzou/p/5380073.html)
+- [Mysql性能优化三](http://www.cnblogs.com/jiekzou/p/5399160.html)
