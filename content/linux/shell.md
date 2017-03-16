@@ -1,5 +1,5 @@
 ---
-title: Shell script
+title: Shell 命令行实践
 layout: page
 date: 2015-11-25
 ---
