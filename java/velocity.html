@@ -6,7 +6,7 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
-    <title>Linux设备管理 - Wiki | HanSong</title>
+    <title>Velocity 实践 - Wiki | HanSong</title>
     <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
     <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -16,37 +16,36 @@
     <div id="container">
       
 <div id="header">
-  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#kernel">kernel</a>&nbsp;&#187;&nbsp;Linux设备管理
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#java">java</a>&nbsp;&#187;&nbsp;Velocity 实践
     <span class="updated">Updated&nbsp;
-      2015-09-22
+      2017-03-16
     </span></div>
 </div>
 <div class="clearfix"></div>
 
-<div class="page_title">Linux设备管理</div>
+<div class="page_title">Velocity 实践</div>
 
   <div class="toc"><span class="toctitle">Table of Contents</span><ul>
-<li><a href="#linux">Linux内核对硬件设备的支持级别</a></li>
+<li><a href="#velocity">Velocity 转义字符</a></li>
 </ul>
 </div>
-<h2 id="linux">Linux内核对硬件设备的支持级别</h2>
-<blockquote>
-<p>add at 2015-09-22</p>
-</blockquote>
-<ol>
-<li>
-<p>完全不支持</p>
-<p>应用程序使用适当的in和out汇编语言指令直接与设备的I/O端口进行交互</p>
-</li>
-<li>
-<p>最小支持</p>
-<p>内核不识别硬件设备,但能识别它的I/O接口.用户程序把I/O接口视为能够读写的字符流的顺序设备</p>
-</li>
-<li>
-<p>扩展支持</p>
-<p>内核识别硬件设备,并处理I/O接口本身.事实上,这种设备可能就没有对应的设备文件</p>
-</li>
-</ol>
+<h2 id="velocity">Velocity 转义字符</h2>
+<p>Velocity 语法不支持转义，也就是说不能用<code>\"</code>是没用的。但是有的时候我们是需要在字符串中输入<code>"</code>的，例如说拼接 json 字符串的时候，这时候就需要用到 Velocity Tools <code>EscapeTool</code>来进行转义。</p>
+<div class="hlcode"><pre>VelocityContext context = new VelocityContext();
+context.put(&quot;esc&quot;, new EscapeTool());
+
+-------------------------------------------------
+#set(<span class="nv">$test</span>=&quot;<span class="cp">${</span><span class="n">esc</span><span class="o">.</span><span class="n">q</span><span class="cp">}</span>name<span class="cp">${</span><span class="n">esc</span><span class="o">.</span><span class="n">q</span><span class="cp">}</span>&quot;)
+<span class="nv">$test</span>
+</pre></div>
+
+
+<p>输出结果：</p>
+<div class="hlcode"><pre><span class="s">&quot;name&quot;</span>
+</pre></div>
+
+
+<p>其他转义方式参考文档<a href="http://velocity.apache.org/tools/devel/apidocs/org/apache/velocity/tools/generic/EscapeTool.html">EscapeTool</a></p>
     </div>
     <div id="footer">
       <span>

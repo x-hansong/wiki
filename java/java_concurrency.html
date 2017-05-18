@@ -42,22 +42,14 @@
 </ul>
 </div>
 <h2 id="_1">线程的状态</h2>
-<ol>
-<li>新建状态（New）：新创建了一个线程对象。</li>
-<li>就绪状态（Runnable）：线程对象创建后，其他线程调用了该对象的start()方法。该状态的线程位于可运行线程池中，变得可运行，等待获取CPU的使用权。</li>
-<li>运行状态（Running）：就绪状态的线程获取了CPU，执行程序代码。</li>
-<li>
-<p>阻塞状态（Blocked）：阻塞状态是线程因为某种原因放弃CPU使用权，暂时停止运行。直到线程进入就绪状态，才有机会转到运行状态。阻塞的情况分三种：</p>
-<ol>
-<li>等待阻塞：运行的线程执行wait()方法，JVM会把该线程放入等待池中。</li>
-<li>同步阻塞：运行的线程在获取对象的同步锁时，若该同步锁被别的线程占用，则JVM会把该线程放入锁池中。</li>
-<li>其他阻塞：运行的线程执行sleep()或join()方法，或者发出了I/O请求时，JVM会把该线程置为阻塞状态。当sleep()状态超时、join()等待线程终止或者超时、或者I/O处理完毕时，线程重新转入就绪状态。</li>
-</ol>
-</li>
-<li>
-<p>死亡状态（Dead）：线程执行完了或者因异常退出了run()方法，该线程结束生命周期。</p>
-</li>
-</ol>
+<ul>
+<li>NEW (新建):A thread that has not yet started is in this state.</li>
+<li>RUNNABLE (可运行):A thread executing in the Java virtual machine is in this state.</li>
+<li>BLOCKED (阻塞):A thread that is blocked waiting for a monitor lock is in this state.</li>
+<li>WAITING (等待):A thread that is waiting indefinitely for another thread to perform a particular action is in this state.</li>
+<li>TIMED_WAITING (计时等待):A thread that is waiting for another thread to perform an action for up to a specified waiting time is in this state.</li>
+<li>TERMINATED (终止):A thread that has exited is in this state.</li>
+</ul>
 <h2 id="thread">Thread</h2>
 <h3 id="jointimeout">join(timeout) 方法</h3>
 <p>Waits at most millis milliseconds for this thread to die. A timeout of 0 means to wait forever.
@@ -168,9 +160,9 @@ Biased锁将会尝试声明某个对象属于一个特定的线程，这个线�
     </div>
     <div id="footer">
       <span>
-        <p>Copyright © 2016 HanSong Xiao.
+        <p>Copyright © 2017 HanSong Xiao.
         Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script></p>
-        <p>Site Generated 2016-11-21 21:52:38</p>
+        <p>Site Generated 2017-05-18 00:05:23</p>
       </span>
     </div>
   </body>
