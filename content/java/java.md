@@ -112,8 +112,15 @@ If a top level class or interface type is not declared public, then it may be ac
 最后，很显然，数组和普通对象存放的数据也是不同的。普通对象中存放的是实例变量，通过putfield和getfield指令存取。数组对象中存放的则是数组元素，通过<t>aload和<t>astore系列指令按索引存取。其中<t>可以是a、b、c、d、f、i、l或者s，分别用于存取引用、byte、char、double、float、int、long或short类型的数组。另外，还有一个arraylength指令，用于获取数组长度。
 
 ## Serializable 接口的 serialVersionUID
-serialVersionUID 用来为可序列化的对象实现序列化版本的控制。如果不显示设置 serialVersionUID， JVM 将为你自动为可序列化的对象设置该值。如果 serialVersionUID 值不同，JVM将认为是同一个对象的不同版本，从而不允许反序列化的进行。
+The serialization runtime associates with each serializable class a version number, called a serialVersionUID, which is used during deserialization to verify that the sender and receiver of a serialized object have loaded classes for that object that are compatible with respect to serialization. If the receiver has loaded a class for the object that has a different serialVersionUID than that of the corresponding sender's class, then deserialization will result in an InvalidClassException. A serializable class can declare its own serialVersionUID explicitly by declaring a field named "serialVersionUID" that must be static, final, and of type long:
 
-所以为了服务的后续升级和可维护性，实现 Serializable 接口的类一定为其显式声明 serialVersionUID 值，并保证不变。
+    ANY-ACCESS-MODIFIER static final long serialVersionUID = 42L;
 
-需要注意的时serialVersionUID的值并不会被继承，也就是说如果 B 继承了 A，A 实现了 Serializable 接口并设置了 serialVersionUID，那么 B 是不会自动继承 serialVersionUID 的值的，还需要手动为之设置。
+If a serializable class does not explicitly declare a serialVersionUID, then the serialization runtime will calculate a default serialVersionUID value for that class based on various aspects of the class, as described in the Java(TM) Object Serialization Specification. However, it is strongly recommended that all serializable classes explicitly declare serialVersionUID values, since the default serialVersionUID computation is highly sensitive to class details that may vary depending on compiler implementations, and can thus result in unexpected InvalidClassExceptions during deserialization. Therefore, to guarantee a consistent serialVersionUID value across different java compiler implementations, a serializable class must declare an explicit serialVersionUID value. It is also strongly advised that explicit serialVersionUID declarations use the private modifier where possible, since such declarations apply only to the immediately declaring class--serialVersionUID fields are not useful as inherited members.
+
+## Java 编码
+Java 中的 String 类型（以及 char 类型）在内存中使用 UTF-16 编码。
+
+由于 char 是 16 位固定长度，它的容量总是有限的，上限是 2**16=65536，能表示 0-65535（0x0000-0xFFFF）。即便满打满算它也只能表示 6 万多个不同字符而已，另一方面，Unicode 规划的字符空间高达 100 万以上，最新版本已经定义的字符也超过了 10 万。规划的码点范围具体为 U+0000 ~ U+10FFFF。char 能表示前面的 U+0000 ~ U+FFFF，对于 U+10000 ~ U+10FFFF 则无能为力。对于超过的 2 个字节的字符，需要两个 char 构成一个所谓的代理对才能表示一个抽象的字符。
+
+参考[文本在内存中的编码(1)——乱码探源(4)](http://xiaogd.net/%E6%96%87%E6%9C%AC%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E7%BC%96%E7%A0%811-%E4%B9%B1%E7%A0%81%E6%8E%A2%E6%BA%904/)
