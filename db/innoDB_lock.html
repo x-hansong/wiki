@@ -34,6 +34,8 @@
 <li><a href="#_4">行锁的三种算法</a></li>
 </ul>
 </li>
+<li><a href="#_5">死锁</a></li>
+<li><a href="#_6">阻塞</a></li>
 </ul>
 </div>
 <h2 id="_1">锁的类型</h2>
@@ -155,12 +157,24 @@
 </ol>
 </li>
 </ol>
+<h2 id="_5">死锁</h2>
+<p>死锁指两个或以上事务因争夺锁资源造成互相等待。解决方式：</p>
+<ol>
+<li>超时机制：事务等待超时即回滚。</li>
+<li>wait-for graph（等待图）进行死锁检测，通过保存锁的信息链表和事务等待链表，然后构造等待图。在每个事务请求锁并发等待的时候都会判断是否存在回路，若存在死锁，InnoDB会回滚undo量最小的事务。</li>
+</ol>
+<h2 id="_6">阻塞</h2>
+<p>阻塞即一个事务的锁需要等待其他事务的锁释放资源。</p>
+<p>在InnoDB存储引擎中，参数innodb_lock_wait_timeout用来控制等待的时间（默认是50秒），innodb_rollback_on_timeout用来设定
+是否在等待超时时对进行中的事务进行回滚操作（默认是OFF，代表不回滚）。参数innodb_lock_wait_timeout是动态的，可以在MySQ
+L数据库运行时进行调整。</p>
+<p>在默认情况下InnoDB不会回滚超时引发的错误异常，因此用户必须判断是否进行提交或者回滚。但是如果检测到死锁发生，InnoDB会马上回滚事务。</p>
     </div>
     <div id="footer">
       <span>
         <p>Copyright © 2017 HanSong Xiao.
         Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script></p>
-        <p>Site Generated 2017-05-18 00:05:23</p>
+        <p>Site Generated 2017-05-20 20:29:28</p>
       </span>
     </div>
   </body>

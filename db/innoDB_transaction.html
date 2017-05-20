@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>InnoDB 事务的实现 - Wiki | HanSong</title>
+    <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+    <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#db">db</a>&nbsp;&#187;&nbsp;InnoDB 事务的实现
+    <span class="updated">Updated&nbsp;
+      2017-05-18
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">InnoDB 事务的实现</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">事务的实现</a></li>
+<li><a href="#redo-log">redo log</a><ul>
+<li><a href="#redo-log-binlog">redo log 跟 binlog的区别</a></li>
+<li><a href="#_2">重做日志缓存</a></li>
+</ul>
+</li>
+<li><a href="#undo-log">undo log</a></li>
+</ul>
+</div>
+<h2 id="_1">事务的实现</h2>
+<p>事务的隔离性由锁来实现，原子性，一致性，持久性通过数据库的 redo log 和 undo log 来完成。</p>
+<ul>
+<li>redo log（重做日志）：用来保证原子性和持久性，redo 恢复提交事务修改的页操作，redo通常是物理日志，记录的是页的修改操作。</li>
+<li>undo log：用来保证一致性，undo 回滚行记录到某个特定版本，undo是逻辑日志，根据每行记录进行记录。</li>
+</ul>
+<h2 id="redo-log">redo log</h2>
+<h3 id="redo-log-binlog">redo log 跟 binlog的区别</h3>
+<p>首先，二进制日志会记录所有与MySQL数据库有关的日志记录，包括InnoDB、MyISAM、Heap等其他存储引擎的日志。而InnoDB存储引擎的重做日志只记录有关该存储引擎本身的事务日志。</p>
+<p>其次，记录的内容不同，无论用户将二进制日志文件记录的格式设为STATEMENT还是ROW，又或者是MIXED，其记录的都是关于一个事务的具体操作内容，即该日志是逻辑日志。而InnoDB存储引擎的重做日志文件记录的是关于每个页（Page）的更改的物理情况。</p>
+<p>此外，写入的时间也不同，二进制日志文件仅在事务提交前进行提交，即只写磁盘一次，不论这时该事务多大。而在事务进行的过程中，却不断有重做日志条目（redoentry）被写入到重做日志文件中。</p>
+<h3 id="_2">重做日志缓存</h3>
+<p>重做日志并不是直接写入到磁盘中的，而是先写入一个重做日志缓存中，然后按照一定条件顺序地写入日志文件：</p>
+<ul>
+<li>在主线程中每秒会将重做日志缓冲写入磁盘的重做日志文件中，不论事务是否已经提交。</li>
+<li>触发写磁盘的过程是由参数innodb_flush_log_at_trx_commit控制，表示在提交（commit）操作时，处理重做日志的方式。</li>
+</ul>
+<p>参数innodb_flush_log_at_trx_commit的有效值有0、1、2。</p>
+<ul>
+<li>0代表当提交事务时，并不将事务的重做日志写入磁盘上的日志文件，而是等待主线程每秒的刷新。</li>
+<li>1表示在执行commit时将重做日志缓冲同步写到磁盘，即伴有fsync的调用。</li>
+<li>2表示将重做日志异步写到磁盘，即写到文件系统的缓存中。因此不能完全保证在执行commit时肯定会写入重做日志文件，只是有这个动作发生。</li>
+</ul>
+<p>因此为了保证事务的ACID中的持久性，必须将innodb_flush_log_at_trx_commit设置为1，也就是每当有事务提交时，就必须确保事务都已经写入重做日志文件。那么当数据库因为意外发生宕机时，可以通过重做日志文件恢复，并保证可以恢复已经提交的事务。而将重做日志文件设置为0或2，都有可能发生恢复时部分事务的丢失。不同之处在于，设置为2时，当MySQL数据库发生宕机而操作系统及服务器并没有发生宕机时，由于此时未写入磁盘的事务日志保存在文件系统缓存中，当恢复时同样能保证数据不丢失。</p>
+<h2 id="undo-log">undo log</h2>
+<p>undo 存放在数据库内部的一个特殊段（undo segment）中，在共享表空间中。</p>
+<p>undo log 是逻辑日志，通过取消逻辑修改来回滚事务，例如对于一个INSERT，回滚过程是通过DELETE操作来删除增加的记录。同时undo log 会产生redo log。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2017 HanSong Xiao.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script></p>
+        <p>Site Generated 2017-05-20 20:29:28</p>
+      </span>
+    </div>
+  </body>
+</html>

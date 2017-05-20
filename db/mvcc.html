@@ -81,12 +81,14 @@
 </li>
 </ul>
 <p>保存这个额外的系统版本号，使大多数读操作都可以不用加锁, non-blocking reads 就是这么实现的。这样设计使得读操作很简单，性能很好，并且保证只会读取到符合条件的行。不足之处是每行记录都要额外的存储空间，需要做更多的行检查工作，以及一些额外的维护工作</p>
+<p>值得注意的是，在事务隔离级别READCOMMITTED和REPEATABLEREAD（InnoDB存储引擎的默认事务隔离级别）下，InnoDB存储引擎使用非锁定的一致性读。然而，对于快照数据的定义却不相同。在READCOMMITTED事务隔离级别下，对于快照数据，非一致性读总是读取被锁定行的最新一
+份快照数据。而在REPEATABLEREAD事务隔离级别下，对于快照数据，非一致性读总是读取事务开始时的行数据版本。</p>
     </div>
     <div id="footer">
       <span>
         <p>Copyright © 2017 HanSong Xiao.
         Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script></p>
-        <p>Site Generated 2017-05-18 00:05:23</p>
+        <p>Site Generated 2017-05-20 20:29:28</p>
       </span>
     </div>
   </body>
