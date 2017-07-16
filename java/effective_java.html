@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>Effective Java - Wiki | HanSong</title>
+    <meta name="keywords" content="wiki, markdown, linux, c, java, python, qemu"/>
+    <meta name="description" content="HanSong's personal wiki, recording my little thoughts"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#java">java</a>&nbsp;&#187;&nbsp;Effective Java
+    <span class="updated">Updated&nbsp;
+      2017-07-11
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">Effective Java</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">创建销毁对象</a><ul>
+<li><a href="#_2">使用静态工厂方法替代构造器</a></li>
+<li><a href="#builder">构造器有多个参数时考虑使用builder</a></li>
+<li><a href="#_3">让单例类构造器私有</a></li>
+<li><a href="#_4">工具类使用私有构造器</a></li>
+</ul>
+</li>
+<li><a href="#object">Object 公有方法</a><ul>
+<li><a href="#equalshashcode">重载equals()的时候同时重载hashcode()</a></li>
+<li><a href="#tostring">任何时候重载toString()</a></li>
+</ul>
+</li>
+<li><a href="#_5">类和接口</a><ul>
+<li><a href="#_6">最小化类和成员的访问范围（好的模块化设计对外隐藏内部细节）</a></li>
+<li><a href="#_7">最小化可变性</a></li>
+<li><a href="#_8">优先选择组合而不是继承（继承破坏了封装）</a></li>
+<li><a href="#_9">优先选择接口而不是抽象类</a></li>
+<li><a href="#_10">接口只用于定义类型</a></li>
+<li><a href="#_11">优先选择类继承而不是标签类</a></li>
+</ul>
+</li>
+<li><a href="#_12">泛型</a></li>
+<li><a href="#_13">方法</a><ul>
+<li><a href="#_14">小心设计方法签名</a></li>
+<li><a href="#null">返回空集合而不是null</a></li>
+</ul>
+</li>
+<li><a href="#_15">编程细节</a><ul>
+<li><a href="#_16">最小化局部变量的作用域（在用的时候才声明）</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="_1">创建销毁对象</h2>
+<h3 id="_2">使用静态工厂方法替代构造器</h3>
+<ol>
+<li>静态工厂方法有名字，可读性更强</li>
+<li>静态工厂方法被调用时不需要每次都生成新对象</li>
+<li>静态工厂方法可以返回子类型</li>
+</ol>
+<h3 id="builder">构造器有多个参数时考虑使用builder</h3>
+<h3 id="_3">让单例类构造器私有</h3>
+<h3 id="_4">工具类使用私有构造器</h3>
+<h2 id="object">Object 公有方法</h2>
+<h3 id="equalshashcode">重载equals()的时候同时重载hashcode()</h3>
+<h3 id="tostring">任何时候重载toString()</h3>
+<h2 id="_5">类和接口</h2>
+<h3 id="_6">最小化类和成员的访问范围（好的模块化设计对外隐藏内部细节）</h3>
+<h3 id="_7">最小化可变性</h3>
+<h3 id="_8">优先选择组合而不是继承（继承破坏了封装）</h3>
+<h3 id="_9">优先选择接口而不是抽象类</h3>
+<h3 id="_10">接口只用于定义类型</h3>
+<h3 id="_11">优先选择类继承而不是标签类</h3>
+<h2 id="_12">泛型</h2>
+<h2 id="_13">方法</h2>
+<h3 id="_14">小心设计方法签名</h3>
+<ol>
+<li>选择合适的名字</li>
+<li>不要提供太多不常用的方法</li>
+<li>避免长的参数列表（不超过4个）</li>
+<li>参数列表优先选择接口</li>
+<li>优先选择枚举而不是boolean</li>
+</ol>
+<h3 id="null">返回空集合而不是null</h3>
+<h2 id="_15">编程细节</h2>
+<h3 id="_16">最小化局部变量的作用域（在用的时候才声明）</h3>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2017 HanSong Xiao.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1256629854'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1256629854%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script></p>
+        <p>Site Generated 2017-07-16 23:42:46</p>
+      </span>
+    </div>
+  </body>
+</html>
